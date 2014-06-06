@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="{{=T.accepted_language or 'en'}}"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en">
+    <head>
+        {{host_address = request.env.http_host}}
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="author" content="Farsheed Ashouri" />
+        <meta name="description" content="{{=session.description}}"/>
+        <meta name="keywords" content="{{=session.keywords}}"/>
+        {{if 'ashouri.org' in host_address:}}
+            <meta name="google-site-verification" content="cC4ZYlX5ymqPX940-OZXacLR8gdaukZq3TUGt9laO5I" />
+            <meta name="msvalidate.01" content="FDC7DFF198E26218A4690E93057ED9E2" />
+        {{pass}}
+        <title>{{=response.title}}</title>
+        <meta name="robots" content="follow, all" />
+        <meta http-equiv="CACHE-CONTROL" content="Public" />
+        <link rel="shortcut icon" href="{{=URL('static','favicon.ico')}}" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="{{=URL('static','favicon.png')}}" />
+        <meta name="application-name" content="Ashouri Resume" />
+        <link rel="stylesheet" type="text/css" href= "{{=URL(r=request, c='static', f='css/index.css')}}" media="screen" />  
+
+    </head>
+<body>
+<div style="width:981px;margin:auto;">
+{{include 'pages/resume_contents.html'}}
+</div>
+<script type="text/javascript">
+{{if 'ashouri.org' in host_address:}}
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-25260107-1']);
+      _gaq.push(['_setDomainName', '.ashouri.org']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+{{pass}}
+</script>
+
+
+</body>
+</html>

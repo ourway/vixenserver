@@ -1,0 +1,104 @@
+{{extend 'light_overlay.html'}}
+<div style="color:#515151">
+
+
+    <div style="padding:10px;margin-bottom:10px;background:#eee" id='prsmaya'>
+
+        Members:
+        <br>
+        {{for i in users:}}
+        <input type="checkbox" name="members"
+        {{if auth.has_membership('pr-%s'%project.uuid, i.id):}}
+        checked="checked"
+        {{pass}}
+        {{if i.id == project.owner:}}
+        disabled="disabled"
+        {{pass}}
+        value="{{=i.id}}">{{=i.first_name.title()}} {{=i.last_name.title()}}<br>
+        {{pass}}
+
+        <br/>
+<button rel="close" id="addmembers">Save Settings</button>
+
+</div>
+
+    <!--
+<p style="color:#717171"
+<small><b>IMPORTANT</b>: <span style="color:darkred"><b>Double check</b> before changing anything here!</span></small>
+</p>
+
+<div style="padding:10px;margin-bottom:10px;background:#eee" id='prsmaya'>
+	Main <b>3D</b> software:
+		<br/>
+
+	<select name="software_3d">
+		<option selected="selected">maya - Autodesk Maya</option>
+		<option >3dsmax - Autodesk 3dsMax</option>
+		<option >xsi - Autodesk SoftImage XSI</option>
+		<option >houdini SideFX Houdini Master</option>
+		<option >cinema4d - Maxon Cinema4D</option>
+		<option >blender - Blender</option>
+	</select>
+	<br/>
+	<br/>
+	Main <b>compositing</b> software:
+		<br/>
+
+	<select name="software_comp">
+		<option selected="selected">nuke - The Foundry NukeX</option>
+		<option >shake - Apple Shake</option>
+		<option >toxik - Autodesk Composite (Toxik)</option>
+		<option >fusion - Digital Fusion</option>
+		<option >aftereffects - Adobe After Effects</option>
+		<option >flame - Flame / Inferno</option>
+	</select>
+	<br/>
+	<br/>
+	Please Enter a <b>full path</b> of your project folder</b>:
+	<br/>
+	<input name="mayapath" id="mayapath" type="text" placeholder="Example: /home/admin/projects/mayapr" {{if project.path:}} style="font-family:monospace;color:#333" value="{{=project.path}}" {{pass}}/> 
+
+	<span id="res"></div>
+
+<input type="hidden" name="pid" value="{{=project.uuid}}" />
+<button rel="" id="restruct">Re-Struct</button>
+<button rel="close" id="save">Save Settings</button>
+
+</div>
+
+-->
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+ 		$('#addmembers').click(function(){
+ 			var val = $(this).val();
+ 			//alert(val);
+            ajax('{{=URL(c="utils", f="member_management", vars={"project":project.id})}}', ['members'], 'messages')
+ 		})
+
+
+
+ 		$('#mayapath').change(function(){
+ 			var val = $(this).val();
+ 			//alert(val);
+ 			ajax('{{=URL(c="utils", f="checkdir")}}', ['mayapath'], 'res')
+ 		})
+
+  		$('#save').click(function(){
+ 			var val = $(this).val();
+ 			//alert(val);
+ 			ajax('{{=URL(c="utils", f="saveprsettings")}}', ['software_3d', 'software_comp', 'pid', 'mayapath'], 'res');
+			ajax('{{=URL(c="utils", f="struct")}}', ['pid'], 'res')
+ 		})
+ 	});
+
+ </script>

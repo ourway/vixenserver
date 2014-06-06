@@ -1,0 +1,69 @@
+<div id=gallery_show_center_contents>
+{{from PIL import Image}}
+{{if len(request.args)==2:}}
+    {{uuid_string=request.args[-1]}}
+    {{file = db(db.file.uuid==uuid_string).select().first()}}
+    {{if file:}}
+        {{gal_item_img_url_low = URL(r=request, c='static', f='uploads/%s.gallery_show_thumb.jpg' % file.hash ) }}
+        {{gal_item_img_url     = URL(r=request, c='static', f='uploads/%s.gallery_show.jpg' % file.hash ) }}
+        {{bbox = Image.open('%sstatic/uploads/%s.gallery_show.jpg' % (request.folder, file.hash)  )}}
+        {{width  = bbox.getbbox()[2]}}
+        {{height = bbox.getbbox()[3]}}
+        {{if session.user_id:}}
+            <button id="backtogalbut" class="uiButton"> Back to gallery </button>
+        {{pass}}
+        <div id=gallery_show_image_div>
+        <p align=center>
+        <img id="gallery_show_img_big" style="background:url({{=gal_item_img_url_low}}) no-repeat;background-size: {{=width}}px {{=height}}px;" class="gallery_img_big" height="{{=height}}" width="{{=width}}" src="{{=gal_item_img_url}}" ></img>
+        </p>
+        </div>
+
+        <script type="text/javascript">
+         $(document).ready(function(){
+            $('#gallery_show_image_div').fadeIn('slow');
+        });
+        </script>
+    {{else:}}
+        {{redirect('../index')}}
+    {{pass}}
+
+
+
+{{else:}}
+
+            <button id="backtoall" class="uiButton"> All Galleries </button> <div align="center"
+            id="gal_name_p" ><small> {{=gallery.name.title()}} </small></div> 
+
+<div id="gallery_pics_div">
+    {{for i in gallery.photos:}}
+        {{file = db(db.file.id==int(i)).select().first()}}
+        {{if file:}}
+            {{gal_item_img_url = URL(r=request, c='static', f='uploads/%s.profile_gallery.jpg' % file.hash ) }}
+            <a href="{{=URL(r=request, c='gallery', f='show', args='%s/%s' % (gallery.uuid, file.uuid) )}}"><img alt="photo" height="100" width="86" src="{{=gal_item_img_url}}"></img></a>
+        {{pass}}
+
+    {{pass}}
+</div>
+    {{file=None}}
+{{pass}}
+
+</div>
+<div>
+    {{=LOAD(c='utils', f='comment_core', args=[], vars={'item':item.pid}, ajax=True)}}
+</div>
+<!-- js script part -->
+<script type="text/javascript">
+ $(document).ready(function(){
+
+    $('.link_button').click(function(){
+        document.location = '../../show/{{=gallery.uuid}}'
+    });
+    $('#backtogalbut').click(function(){
+        window.location="../../show/{{=gallery.uuid}}";
+    });
+    $('#backtoall').click(function(){
+        window.location="../";
+    });
+
+ });
+</script>

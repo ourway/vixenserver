@@ -1,0 +1,109 @@
+{{extend 'light_overlay.html'}}
+{{import os}}
+{{fid = request.vars.fid}}
+{{item = db(db.item.pid==pid).select(db.item.vfiles).last()}}
+{{fdb = db(db.vfile.uuid==fid).select().first()}}
+{{if fdb:}}
+        <div  class="img_viewer" >
+        {{if not fdb.ext in ['psd','tif']:}}
+                <img class="view_main_img" id="show_image" width="500" src="{{=URL(c='static', f='uploads/%s'%fdb.name)}}" />
+            {{else:}}
+            <img id="show_image" class="view_main_img" width="500" src="{{=URL(c='static', f='uploads/%s.png'%fdb.name)}}" />
+        {{pass}}
+        </div>
+        <br/>
+
+        <div id="tdiv" style="margin:auto;display:inline-block;width:500px;">
+            {{if item:}}
+        <div>
+            <span id="imgviewer_info">{{=fdb.rawname}}</span>
+        </div>
+
+        {{for each in item.vfiles:}}
+            {{img = db(db.vfile.id==each).select(db.vfile.ext, db.vfile.id, db.vfile.name, db.vfile.rawname).last()}}
+            {{formats=['psd','tif', 'jpg', 'bmp', 'png', 'pdf', 'svg']}}
+            {{if img and img.ext in formats:}}
+                {{if not img.ext in ['psd','tif', 'pdf']:}}
+                <img width="48" class="viewthumb" name="{{=img.rawname}}" src="{{=URL(c='static', f='uploads/%s.thumb.png'%img.name)}}" />
+                {{else:}}
+                <img width="48" class="viewthumb" name="{{=img.rawname}}" src="{{=URL(c='static', f='uploads/%s.png.thumb.png'%img.name)}}" />
+                {{pass}}
+            {{pass}}
+        {{pass}}
+        
+    {{pass}}
+        </div>
+
+
+<script type="text/javascript">
+
+    function img_on_start(){
+        var wh = $(window).height();
+        $('.view_main_img').attr('height', wh-96-80-50);
+    };
+        
+    $(document).ready(function(){
+
+    //img_on_start();
+            //reheight();
+    function reheight(event)
+    {
+        {{if item:}}
+            var num = {{=len(item.vfiles)}};
+            var wid = $('.view_main_img').width();
+            var result = (wid/num);
+            if (result<=48){
+                $('.viewthumb').attr('width', result);
+            }
+            else{
+
+                $('.viewthumb').attr('width', 48);
+                };
+                //img_on_start();
+                $('#tdiv').attr('width', wid);
+                $.scrollUp();
+        {{pass}}
+
+      return false;
+      };
+    
+            reheight();
+            $('*[id*=lbc_]').trigger('reposition');
+
+            function loadimg(event)
+            {
+              if(event.handled !== true)
+              {
+                    var src = $(this).attr('src');
+                    
+                    $("#show_image").attr('src', src);
+                    //$("#show_image").fadeOut();
+
+                    //$("#show_image").attr('src', src);
+                    $("#show_image").attr('src', src.replace('.thumb.png', ''))
+                    name = $(this).attr('name');
+                    $('#imgviewer_info').html(name);
+                    //window.onload = resize_middle();
+                    reheight();
+                    $('*[id*=lbc_]').trigger('reposition');
+                    //alert(imgSource.replace("{{=fdb.name}}", name));
+              }
+              return false;
+              };
+
+    $(".viewthumb").live('click', loadimg);
+
+            $(".view_main_img").live('mouseover', function(){
+                    $('#imgviewer_info').fadeIn();
+                    });
+            $(".view_main_img").live('mouseout', function(){
+                    $('#imgviewer_info').fadeOut();
+                    });
+            
+
+    });
+</script>
+
+{{pass}}
+
+

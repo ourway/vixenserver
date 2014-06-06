@@ -1,0 +1,44 @@
+{{extend 'layout.html'}}
+{{import time}}
+<h2 align=center style="background:#ccc;color:#333" ><b>A</b>ssets List  <button id="addAsset">+</button></h2>
+
+<div id=assets_div>
+<ol>
+    {{for i in assets:}}
+{{if auth.user_id == i.supervisor:}}
+    <li><a style="text-decoration:none" href={{=URL(f='asset', vars={'asid':i.uuid, 'name':i.name})}}>
+    <img height=64 width=64 
+    {{if i.thumb:}}
+        src="{{=URL(c='static', f='uploads/%s' % (i.thumb.name))}}"
+    {{else:}}
+        src="{{=URL(c='static', f='images/asset_thumb.png')}}"
+
+    {{pass}}
+    />
+    <b>{{=i.name}}</b>
+
+    </a></li>
+{{pass}}
+{{pass}}
+</ol>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+    $('#addAsset').click(function(){
+        var prefix = "{{=auth.user.first_name[0]}}{{=auth.user.last_name[0]}}_{{=''.join(time.ctime().split()[:3])}}_"
+        var asname = prompt("Enter a name for this asset:",prefix);
+        if (asname){
+            if (asname !=prefix){
+                ajax('{{=URL(c="home", f="add_asset")}}?asname='+asname,[''], 'messages');
+            }
+            else{
+                alert('{{=auth.user.first_name.title()}}! You need to specify a unique name for your asset.')
+            }
+        }
+    });
+
+
+    }); 
+</script>

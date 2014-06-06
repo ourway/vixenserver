@@ -1,0 +1,83 @@
+{{extend 'layout.html'}}
+<script type="text/javascript">
+    ajax('{{=URL(c="utils", f="ajax_convert_tools", vars={"item":item.pid})}}', [], 'messages');
+</script>
+<h2 style="background:#ccc" align="center">{{=request.vars.name}}</h2>
+<div style="background:#f5f5f5;padding:10px;">
+
+    <table><tr>
+            <td>
+<div  id="attach_div">
+{{=LOAD(content='', c='home',f='attachments', vars={'ipid':item.pid, 'mode':'asset'}, ajax=False)}}
+</div>
+</td><td>
+<div id="attach_viewer" style="background:#fff;border:1px solid #ccc;margin:auto;margin-top:0px;margin-bottom:10px;border:1px solid #ccc;width:450px;min-hight:600px">
+<iframe id="attach_iframe" height="550" width="450" seamless>
+</iframe>
+<img id="attach_inline_img_viewer" width="450" src="" /></div>
+</div>
+</td>
+</tr>
+</table>
+<br/>
+
+<!------------------ previews -------------------------
+-->
+
+<div id="asset_previews" style="padding:20px;">
+    {{for each in item.vfiles:}}       
+    {{i = db(db.vfile.id==each).select(db.vfile.uuid, db.vfile.name, db.vfile.rawname, db.vfile.datetime, db.vfile.ext, db.vfile.uploader).first()}}
+    <div id="" title="{{=i.rawname}}" class="each_asset_preview">
+        {{if i and i.ext in ['html']:}}
+            <iframe height="220" width="220" src="{{=URL(c='home', f='download', vars={'ext':i.ext, 'fid':i.uuid})}}" seamless></iframe>
+        {{pass}}
+        {{if i and i.ext in ['docx', 'txt']:}}
+       {{=LOAD(content='', c='utils', f='readdocx', vars={'raw':'true', 'did':i.uuid}, ajax=True)}}
+       {{pass}}
+            {{if i and  i.ext in ['pdf']:}}
+                <img class="asset_img" width="220" src="{{=URL(c='static', f='uploads/%s.png.thumb.png' % i.name)}}" />
+            {{pass}}
+
+
+            {{if i and  i.ext in ['png', 'jpg', 'gif', 'svg']:}}
+
+            <div style="width: 220px; height: 220px; overflow: hidden">
+                <a href="{{=URL(c='utils', f='vfile_comments', vars={'item':item.uuid, 'uuid':i.uuid})}}"><img class="asset_img" width="220" src="{{=URL(c='static', f='uploads/%s.thumb.png' % i.name)}}" /></a>
+            </div>
+            {{elif i and i.ext in ['psd', 'tif']:}}
+            <div style="width: 220px; height: 220px; overflow: hidden">
+                <a href="{{=URL(c='utils', f='vfile_comments', vars={'item':item.uuid, 'uuid':i.uuid})}}"><img class="asset_img" width="220" src="{{=URL(c='static', f='uploads/%s.png'% i.name)}}" /></a>
+            </div>
+            {{pass}}
+            {{if i and i.ext in ['m4v', 'mp3', 'mov']:}}
+                <video width="220" height="220" preload="metadata" controls>
+                <source src="{{=URL(c='static', f='uploads/%s'%i.name)}}" type="video/mp4">
+                </video>
+            {{pass}}
+        </div>
+    {{pass}}
+</div>
+
+</div>
+
+<hr/>
+<div id="comment_area" style="">
+<h4 style="color:darkGreen;opacity:0.5"><b>C</b>omments:</h4>
+{{=LOAD(content='', c='utils',f='comment_core', vars={'item':item.pid}, ajax=True)}}
+</div>
+
+<script type="text/javascript">
+ $(document).ready(function(){
+
+    $('#thumbplace').fadeIn(1000);
+    $('#comment_area').fadeIn(1500);
+
+    $('#photochooser').change(function(){
+            $('#thumbform').submit();
+    });
+    $('#attachchooser').change(function(){
+            $('#attachform').submit();
+    });
+ });
+</script>
+

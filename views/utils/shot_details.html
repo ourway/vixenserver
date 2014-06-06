@@ -1,0 +1,132 @@
+    <div id="shot_fields">
+    <h4>Shot Details:</h4>
+<form action="{{=URL(c='utils', f='update_shot')}}" method="post">
+<table class="main_table">
+<tr><th>Task</th><th>Responsible</th><th>Complexity</th><th>Details</th><th>WIP</td><th>Completed</th>
+<th>Director Confirmation</th>
+</tr>
+{{fields = ['Animatic', 'Animation', 'Layout' ,'Lighting', 'Preview', 'Compositing', 'Rendering'] }}
+{{for i in fields:}}
+    {{sup=eval('shot.%s_sup'% (i.lower()))}}
+    <tr>
+    <td style="background:#ccc;border-bottom:1px solid #aaa;"><b style="color:#333">{{=i}}</b></td>
+    <td {{if eval('shot.%s_sup'%(i.lower())):}} class="lightgreen" {{pass}}>
+    {{if is_master or auth.user_id == shot.supervisor:}}
+        <select style="width:150px;" name="{{=i}}_sup">
+        <option  selected="selected"></option>
+        {{users = db(db.auth_user.id).select()}}
+        {{for person in users:}}
+            <option {{if eval('shot.%s_sup'% (i.lower()) ) == person.id:}}  selected="selected" {{pass}}>{{=person.first_name.title()}} {{=person.last_name.title()}} [ {{=person.id}} ]</option>
+        {{pass}}
+            
+    </select>
+    {{else:}}
+    {{if sup and auth.user_id !=sup.id:}}
+        <a href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light" vars="target={{=sup.id}}&mtype=message"
+        title="Send a Message">{{=sup.last_name.title()}}</a>
+    {{elif sup and auth.user_id ==sup.id:}}
+        <b>You</b>
+    {{pass}}
+    {{pass}}
+    </td>
+    <td>
+    {{complexity = eval('shot.%s_complexity'%i.lower())}}
+    {{if not eval('shot.%s_isconfirmed'% (i.lower())) and (is_master or (auth.user_id == shot.supervisor) or (auth.user_id == eval('shot.%s_sup'% (i.lower())))):}}
+        <select style="color:#aaa;width:100px;" name="{{=i}}_complexity">
+        <option
+        
+        {{if  complexity == 1:}}
+            selected="selected"
+        {{pass}}
+        >Low (1)</option>
+        <option 
+        {{if not complexity or complexity == 2:}}
+            selected="selected"
+        {{pass}}
+        >Medium (2)</option>
+        <option
+        {{if complexity == 3:}}
+            selected="selected"
+        {{pass}}
+        
+        >High (3)</option>
+        </select>
+    {{else:}}
+        {{if complexity ==1:}}
+            <b>L</b>ow
+        {{elif not complexity or complexity ==2:}}
+            <b>M</b>edium
+        {{elif complexity ==3:}}
+            <b>H</b>igh
+        {{pass}}
+
+    {{pass}}
+    </td>
+    <td >
+    </td>
+    <td
+    {{if eval('shot.%s_iswip'%i.lower()):}} class="lightyellow" {{pass}}
+    ><input type="radio" value="True"
+
+    {{if eval('shot.%s_iscompleted'%i.lower()):}}  disabled="disabled"  {{pass}}
+    {{if not eval('shot.%s_sup'%i.lower()):}}  disabled="disabled"  {{pass}}
+    {{if sup and auth.user_id !=sup.id:}}  disabled="disabled"{{pass}}
+    {{if eval('shot.%s_iswip'%i.lower()):}} checked="checked" {{pass}}
+    name="{{=i.lower()}}_iswip"
+    {{if eval('shot.%s_iswip'%i.lower()):}}
+        title="{{=prettydate(eval('shot.%s_iswip_date'%i.lower()), T)}}"
+    {{pass}}
+    />
+    </td>
+    <td
+    {{if eval('shot.%s_iscompleted'%i.lower()):}} class="lightgreen" {{pass}}
+    ><input type="radio" value="True"
+    {{if eval('shot.%s_isconfirmed'%i.lower()):}} disabled="disabled" {{pass}}
+    {{if eval('shot.%s_iscompleted'%i.lower()):}} checked="checked" {{pass}} 
+    {{if sup and auth.user_id !=sup.id:}}  disabled="disabled"{{pass}}
+    {{if not eval('shot.%s_iswip'%i.lower()):}} disabled="disabled" {{pass}} 
+    name="{{=i.lower()}}_iscompleted" 
+    {{if eval('shot.%s_iscompleted'%i.lower()):}}
+        title="{{=prettydate(eval('shot.%s_iscompleted_date'%i.lower()), T)}}"
+    {{pass}}
+
+    
+    /></td>
+    <td
+    {{if eval('shot.%s_isconfirmed'%i.lower()):}} class="darkgreen" {{pass}}
+    ><input style="width:180px;" 
+    {{if eval('shot.%s_isconfirmed'%i.lower()):}} checked="checked" {{pass}}
+    {{if not eval('shot.%s_iscompleted'%(i.lower())):}} disabled="disabled" {{pass}}
+    {{if eval('shot.%s_isconfirmed'%(i.lower())):}} disabled="disabled" {{pass}}
+    {{if shot.sequence.project.director and auth.user_id !=shot.sequence.project.director.id:}}  disabled="disabled"{{pass}}
+    {{if not shot.sequence.project.director:}}disabled="disabled"{{pass}}
+
+    type="checkbox" name="{{=i}}_isconfirmed" value="confirm" 
+    {{if eval('shot.%s_isconfirmed'%i.lower()):}}
+        title="{{=prettydate(eval('shot.%s_isconfirmed_date'%i.lower()), T)}}"
+    {{pass}}
+
+    
+    /></td>
+    <!--
+    <td style="background:#fff"><input style="background:#f8f8f8;width:220px;" type="text" name="{{=i.lower()}}_desc" PLACEHOLDER="Write here ..." value="{{=eval('shot.%s_desc'%(i.lower())) or ''}}"></td>
+    -->
+    </tr>
+{{pass}}
+
+
+</table>
+<input type="hidden" value="{{=shot.uuid}}" name="shid" />
+<br/>
+<input type="submit" value="Save Settings" />
+</form>
+    </div>
+
+
+<script type="text/javascript">
+ $(document).ready(function(){
+
+    $('#shot_fields').fadeIn(1000);
+
+ });
+</script>

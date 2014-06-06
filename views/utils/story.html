@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+<div id="story">
+<h2>The Story Of {{=pdb.name.title()}}</h2>
+{{for seq in seqs:}}
+        {{shots = db(db.shot.sequence == seq).select(orderby=db.shot.number)}}
+    <div class="seqs">
+        <h3  style="cursor:pointer" onclick="$(this).parent('div').children('div').toggle(200);">
+        <img style="opacity:0.5;" height="32" width="32" src="{{=URL(c='static', f='images/take3.png')}}" />
+        <a href="{{=URL(c='home', f='sqview', vars={'sid':seq.uuid})}}">Sequence{{=seq.number}}</a>
+        <span style="color:grey;font-size:11pt;" >{{=len(shots)}} shot{{if len(shots)>1:}}s{{pass}}</span> 
+        {{if seq.preview:}}
+            <span style="font-size:10pt;float:right;margin-right:20px;">
+            <button onclick="window.location='{{=URL(c="home", f="video", vars={"vname":seq.preview.name})}}'">Preview</button>
+            </span>
+        {{pass}}
+        </h3>
+
+        <div {{if not seq.preview:}}style="display:none"{{pass}} class="shots">
+        {{for shot in shots:}}
+            <span class="shot">
+
+            {{import random}}
+            {{ran = random.randint(-2,2)}}
+            <a style="float:left" href="{{=URL(c='home', f='shotview', vars={'shid':shot.uuid})}}" title="Shot{{=shot.number}}" ><img style="float:left;-webkit-transform: rotate({{=ran}}deg)" {{if shot.thumb:}} src="{{=URL(c='static', f='uploads/%s.%s' % (shot.thumb.uuid, shot.thumb.ext))}}" class="sepia" {{else:}} src="{{=URL(c='static', f='images/offline_hd480.png')}}" {{pass}} width="281" height="158" /></a>
+
+            </span>
+        {{pass}}
+        </div>
+    </div>
+{{pass}}
+
+</div>

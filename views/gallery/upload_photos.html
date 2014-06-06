@@ -1,0 +1,51 @@
+{{extend 'layout.html'}}
+<br/>
+ <p style="padding-left:15px;"><button id="back_to_gal" class="uiButton">Back to gallery</button></p>
+<div id="wrap">
+        <div style="margin-bottom:40px;">
+            <form action="" method="post" enctype="multipart/form-data">
+<!--<input type="text" placeholder="Enter new gallery name" tabindex="1" id="gal_name" name="gal_name"> -->
+            <div style="display:none" id="photo_upload_gid_holder" gid="{{=request.vars.gid}}"></div>
+            <div id="warpheader"><b>Choose</b> (multiple) files <i>or</i> <b>Drag</b> them onto drop zone below
+            <br/>
+            <br/>
+                <input type="file" id="fileField" name="fileField" multiple />
+            </div>
+            </form>
+        </div>
+            <div class="shadow" id="fileDrop">
+                <p>Drop files here</p>
+            </div>
+            <div class="shadow" id="files">
+                <h2>File list</h2>
+                <a id="reset" href="#" title="Remove all files from list">Clear list</a>
+                <ul id="fileList"></ul>
+                <a id="upload" class="uiButton" href="#" title="Upload all files in list">Upload files</a>
+            </div><br/>
+</div>
+<div id="upload_right_div"></div>
+<script type="text/javascript">
+ $(document).ready(function(){
+    $('#fileDrop').mouseover(function(){
+        $(this).children('p').animate({
+            'padding-top':'10%',
+             opacity      :1,
+            },500, function(){
+            
+        });
+    });
+    $('#fileDrop').mouseout(function(){
+
+        $(this).children('p').animate({
+            'padding-top':'33%',
+             opacity      :0.3,
+            },1500, function(){
+        });
+    });
+
+    $('#upload_right_div').fadeIn(5000);
+    $('#back_to_gal').click(function(){
+        window.location = '{{=URL(r=request, c="gallery", f="show", args=request.vars.gid)}}';
+    });
+});
+</script>

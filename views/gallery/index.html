@@ -1,0 +1,63 @@
+{{extend 'layout.html'}}
+{{session.leftbar_sel='photos'}}
+<div id=home_contents>
+<table><tr><td><div id=gallery_center_div>
+<div id=gallery_index_contents>
+
+<div style="min-height:50px;">
+<h1 class="uiTitle">Your Photo Galleries</h1>
+</div>
+
+{{if len(galleries):}}
+    {{for i in galleries:}}
+        {{if i.artwork:}}
+            {{img_url=URL(r=request,c='static', f='uploads/%s' % i.artwork.name) }}
+        {{elif len(i.photos):}}
+            {{tmp_artwork = i.photos[0]}}
+            {{if tmp_artwork:}}
+                {{img_url=URL(r=request,c='static', f='uploads/%s' % tmp_artwork.name) }}
+            {{pass}}
+        {{else:}}
+            {{img_url=URL(r=request,c='static', f='images/folder.png') }}
+        {{pass}}
+            <div id="gal_{{=i.name}}" class="gallery_index_artwork_div"><a href="{{=URL(r=request, c='gallery', f='show', args=i.uuid)}}"><img alt="artwork" height="100" width="86" src="{{=img_url}}"></img></a> 
+            <span class="blue"><li><b title="Galerry name: {{=i.name.title()}}" class="gal_icon">{{=min( i.name.title(), '%s ...' % i.name[:7].title() )}}
+                
+            
+            </b></li><li><b class="gal_photo_num">{{=len(i.photos)}} Photo{{if len(i.photos)>1:}}s{{pass}}</b></li></span>
+            </div>
+    {{pass}}
+{{pass}}
+</div>
+
+</div></td>
+<td style="vertical-align:top;margin-left:30px;">
+<div style="min-height:20px;"></div>
+<ul>
+
+<li><a title="Create a new gallery" id="create_new_gallery" href="create_new_gallery" rel="light">Create new gallery</a></li>
+<li></li>
+<li></li>
+<li></li>
+</ul>
+
+
+
+<div class="left_grey_border" id=gallery_right_div></div></td>
+</tr></table>
+</div>
+{{pass}}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+    
+        {{if request.vars.select:}}
+            $('#gal_{{=request.vars.select}} img').css('border','2px solid #cef');
+            $('#gal_{{=request.vars.select}} img').mouseout(function(){
+                $(this).css('border','2px solid #eee');
+            });
+            //alert('sada');
+        {{pass}}
+        //$.fancybox('Please notice that website is not ready for usage.');
+    });
+</script>

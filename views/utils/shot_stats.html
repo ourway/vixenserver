@@ -1,0 +1,42 @@
+<div id="wijbarchart" class="ui-widget ui-widget-content ui-corner-all" style="margin:5%;height: 300px"> </div>
+
+
+<script id="scriptInit" type="text/javascript">
+        $(document).ready(function () {
+
+
+
+            $("#wijbarchart").wijbarchart({
+                axis: {
+                    y: {
+                        text: "{{=cr.title()}}"
+                    },
+                    x: {
+                        text: ""
+                    }
+                },
+                hint: {
+                    content: function () {
+                        return this.data.x + ' ' + this.data.label + '\n ' + this.y + ' {{=cr}}';
+                    }
+                },
+                header: {
+                    text: "{{=label}}"
+                },
+                seriesList: [
+                    {
+                        label: "{{=label.split()[1]}}",
+                        legendEntry: true,
+
+                        data: { x: [{{=XML(xt)}}], y: [{{=yt}}] }
+                    },                
+                ],
+                seriesStyles: [{
+                    fill: "{{=fill}}", stroke: "{{=stroke}}", opacity: 0.8
+                }],
+                seriesHoverStyles: [{
+                    "stroke-width": "1.5", opacity: 1
+                }]
+            });
+        });
+    </script>

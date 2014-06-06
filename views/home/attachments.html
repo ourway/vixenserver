@@ -1,0 +1,165 @@
+{{import gluon.contenttype}}
+
+<span style="padding-left:10px;padding-bottom:5px;">
+   <input id="search_attachments" name="attach_query" placeholder="Serach and filter" type="search" class="textInput"/>
+   <input value="{{=item.uuid}}" name="itemuuid" type="hidden" />
+   {{if mode != 'asset':}}
+   <a style="float:right" href="{{=URL(c='home', f='asset', vars={'asid':item.pid, 'name':request.vars.name})}}">Asset mode</a>
+   {{pass}}
+</span>
+<hr/>
+<div style="overflow-y:auto;max-height:200px">
+    <ol class="attach_files_list" style="background:#fff;">
+{{if item and item.vfiles:}}
+    {{for i in item.vfiles:}}
+        {{fdb = db(db.vfile.id==i).select(db.vfile.uuid, db.vfile.name, db.vfile.rawname, db.vfile.datetime, db.vfile.ext, db.vfile.uploader).first()}}
+        {{if fdb:}}
+        <li name="{{=fdb.name}}" ext="{{=fdb.ext}}" class="each_attach_li" id="{{=fdb.uuid}}"><a title="{{=gluon.contenttype.contenttype('.' + fdb.rawname).split('/')[1]}} / {{=fdb.datetime}}" class="sp" href="{{=URL(f='download', vars={'ext':fdb.ext, 'fid':fdb.uuid, 'dl':'true'})}}">{{=fdb.rawname.split('.')[0][:25]}}</a>
+
+
+        {{if fdb.ext=='docx':}}
+        <a style="background:#ccc;color:#313131" href="{{=URL(c='utils', f='readdocx', vars={'did':fdb.uuid})}}"><small>Read</small></a>
+        {{elif fdb.ext=='pdf':}}
+            <a style="background:#ccc;color:#313131" href="{{=URL(f='download', vars={'ext':fdb.ext, 'fid':fdb.uuid})}}"><small>Read</small></a>
+        {{elif fdb.ext in ['jpg', 'png', 'psd', 'tif', 'svg']:}}
+        <a title="Image Viewer" rel="light" vars="fid={{=fdb.uuid}}&item={{=prid}}" href="{{=URL(c='utils', f='img_viewer')}}" style="background:#ccc;color:#313131">View</a>
+        {{elif fdb.ext in ['mp4', 'm4v', 'mov']:}}
+        <a href="{{=URL(c='home', f='video', vars={'vname':fdb.name})}}" style="background:#ccc;color:#313131">Watch</a>
+        {{pass}}
+        <a class="vfile_comment" 
+            href="{{=URL(c='utils', f='vfile_comments', vars={'uuid':fdb.uuid, 'item':item.uuid})}}"
+            title="go to file comment page"><b>Discuss</b></a>
+
+        {{if fdb.uploader:}}<span style="font-size:10px;color:#ccc;">
+            {{if auth.user_id == (fdb.uploader.id):}}
+                by: You
+                
+            {{else:}}
+            by: 
+            <A style="font-weight:100;background:none;border:none;padding-left:0px;" href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light"
+    vars="target={{=fdb.uploader}}&mtype=message" title="Send a Message"
+    >{{=fdb.uploader.last_name.title()}}</a>
+                {{pass}}
+                <span class="prettydate">
+                {{if auth.user_id == (fdb.uploader.id):}}
+                    <a title="click to rename this file" class="rename_vfile" onclick="rename_vfile('{{=fdb.uuid}}')" ><b>R</b></a>
+                    <a title="click to delete this file" class="delete_vfile" onclick="delete_vfile('{{=fdb.uuid}}')" ><b>D</b></a>
+                {{pass}}
+                    {{=prettydate(fdb.datetime, T)}}</span>
+
+        </span> {{pass}}
+            </li>
+        {{pass}}
+    {{pass}}
+{{pass}}
+</ol>
+</div>
+
+{{if mode=='asset' or is_master or auth.has_membership('pr-%s' % prid, auth.user_id):}}
+    {{if mode=='pr': mo='pid'}}
+    {{if mode=='shot': mo='shid'}}
+    {{if mode=='seq': mo='sid'}}
+    {{if mode=='asset': mo='asid'}}
+    {{sid='sid'}}
+    {{shid='shid'}}
+    {{pid='pid'}}
+    {{asid='asid'}}
+    {{pid='pid'}}
+<hr/>
+    <form id="attachform_{{=prid}}" class='attachform' enctype="multipart/form-data" method="post"
+        action="{{=URL(f='upload', vars={'type':'attachment', eval(mo):prid, 'item':prid})}}"
+        
+        >
+        <input style="padding-left:10px;" type="file" accept="*" id="file" name='file' />
+    </form>
+
+{{=LOAD(content='', c='utils',f='drop', vars={eval(mo):prid, 'item':prid}, ajax=False)}}
+
+{{pass}}
+
+
+<script type="text/javascript">
+
+    function delete_vfile(uuid){
+        var delfile = confirm('Are you sure you want to delete this file?');
+            //alert(state);
+        if (delfile)
+            {
+                ajax('{{=URL(c="utils", f="delete_vfile", vars={"pid":item.pid})}}&uuid='+uuid, [''], 'messages');
+            };
+    };
+
+    function rename_vfile(uuid){
+        var ren = prompt("Enter a new name for your file:","");
+            //alert(state);
+        if (ren)
+            {
+                ajax('{{=URL(c="utils", f="rename_vfile", vars={"pid":item.pid})}}&uuid='+uuid+'&rawname='+ren, [''], 'messages');
+            };
+    };
+
+
+
+    
+$(document).ready(function(){
+        
+        ajax('{{=URL(c="utils", f="ajax_convert_tools", vars={"item":item.id})}}', [], 'messages');
+
+            $('.each_attach_li').mouseover(function(){
+                fuuid = $(this).attr('id');
+                ext = $(this).attr('ext');
+                name = $(this).attr('name');
+                $('#attach_iframe').attr('src', '');
+                $('#attach_inline_img_viewer').attr('src', '');
+                $('#attach_inline_img_viewer').hide();
+                if (ext == 'docx'){
+                    src="{{=URL(c='utils', f='readdocx', vars={'raw':'true'})}}" + '&did=' + fuuid;
+                    $('#attach_iframe').attr('src', src);
+                    $('#attach_iframe').show();
+                    };
+                if (ext == 'm4v' || ext=='mp3' || ext=='mov'){
+                    src="{{=URL(c='static', f='uploads')}}" + '/' + name;
+                    $('#attach_iframe').attr('src', src);
+                    $('#attach_iframe').show();
+                    };
+                if (ext == 'pdf' || ext=='html'){
+                    src="{{=URL(c='home', f='download')}}" + '?fid=' + fuuid + '&ext=' + ext;
+                    $('#attach_iframe').attr('src', src);
+                    $('#attach_iframe').show();
+                    };
+                if (ext == 'png' || ext=='jpg' || ext=='gif' || ext=='svg'){
+                        src="{{=URL(c='static', f='uploads')}}" + '/' + name;
+                        $('#attach_inline_img_viewer').attr('src', src);
+                        $('#attach_iframe').hide();
+                        $('#attach_inline_img_viewer').show();
+                    };
+                if (ext == 'psd' || ext=='tif'){
+                        src="{{=URL(c='static', f='uploads')}}" + '/' + name + '.png';
+                        $('#attach_inline_img_viewer').attr('src', src);
+                        $('#attach_iframe').hide();
+                        $('#attach_inline_img_viewer').show();
+                    };
+
+                });
+            $('#attachform_{{=prid}}').change(function(){
+                    $(this).submit(); 
+                });
+           
+            $('#search_attachments').change(function()
+            {
+                ajax('{{=URL(c="utils", f="search_attachments")}}', ['itemuuid', 'attach_query'], 'messages')
+                
+                });
+
+
+        {{if item and item.vfiles:}}
+        {{fdb = db(db.vfile.id==item.vfiles[0]).select(db.vfile.uuid).last()}}
+        //alert("{{=fdb}}");
+        $('#{{=fdb.uuid}}').trigger('mouseover');
+        $('#{{=fdb.uuid}}').trigger('focus');
+        $('#{{=fdb.uuid}}').trigger('hover');
+        {{pass}}
+
+
+     });
+</script>

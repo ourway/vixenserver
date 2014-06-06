@@ -1,0 +1,559 @@
+{{extend 'layout.html'}}
+{{import time}}
+
+<div id="prview">
+
+<img width="64" height="64" class="attprw" src="{{=URL(c='static', f='images/attachment.png')}}" />
+<div id="prview_img">
+
+<div style="min-height:144px">
+<a {{if project.preview and project.preview.process.isfinished:}}href="{{=URL(f='video', vars={'vname':project.preview.name})}}" title="Click to watch preview" {{pass}}><img style="display:none" class="prthm" id="thumbplace" width="256" height="144" 
+    {{if project.thumb:}}
+        src="{{=URL(c='static', f='uploads/%s' % (project.thumb.name))}}"
+    {{else:}}
+       
+        src="{{=URL(c='static', f='images/Adobe_Premiere_Pro_Project.png')}}"
+    {{pass}}
+    
+    /></a>
+</div>
+    <div style="min-height:10px;">
+{{if is_master or auth.user_id == project.owner:}}
+
+
+    <form id="thumbform" class='thumbform' enctype="multipart/form-data" method="post" action="upload?type=image&{{if mode=='pr':}}pid{{elif mode=='seq':}}sid{{elif mode=='shot':}}shid{{elif mode=='asset':}}asid{{pass}}={{=project.uuid}}">
+        <input type="file" accept="jpg|tiff|png" id="photochooser" name='file' />
+    </form>
+
+{{pass}}
+
+<div style="margin-top:10px;">
+<ul>
+{{if mode != 'shot' and (is_master or auth.user_id == project.supervisor):}}
+   <li> <a href="#" id="{{if mode=='pr':}}addSeq{{elif mode=='seq':}}addShot{{elif mode=='shot':}}addAsset{{pass}}">Add New {{if mode=='pr':}}sequences{{elif mode=='seq':}}Shots{{elif mode=='shot':}}Asset{{pass}}</a></li>
+{{pass}}
+{{if mode=='pr' and (auth.user_id==project.owner or is_master):}}
+    <li><a href="#" id="prdelbut">Delete This Project</a></li>
+    <li><a rel="light" vars="pid={{=project.uuid}}" title="Project Settings" href="{{=URL(f='prsettings')}}" id="prsettingsbut">Project <b>Settings</b></a></li>
+{{elif mode=='seq' and (is_master or auth.user_id == project.project.supervisor):}}
+    <li><a href="#" id="seqdelbut">Delete This Sequence</a></li>
+
+{{pass}}
+{{if mode=='pr':}}
+<li><a href="{{=URL(c='utils', f='story', vars={'pid':project.uuid})}}">View Storyline</a></li>
+<li><a href="{{=URL(c='utils', f='rendersheet', vars={'pid':project.uuid})}}">Render Sheet</a></li>
+
+{{pass}}
+{{if mode=='shot' and (is_master or auth.user_id == project.sequence.supervisor):}}
+    <li><a href="#" id="shotdelbut">Delete This Shot</a></li>
+{{pass}}
+
+
+
+{{if (mode=='shot' or mode=='seq') and (is_master or auth.user_id == project.supervisor):}}
+{{if project.preview:}}
+    <li><a href="#" id="preview_delete">Remove Preview</a></li>
+{{pass}}
+    <li><a href="#" onclick="$('#manual_upload_div').toggle();" id="shotdelbut">Update Video</a></li>
+
+    <div id="manual_upload_div" style="display:none">
+        <form id="videoform" class='thumbform' enctype="multipart/form-data" 
+            method="post" 
+            action="upload?type=video&{{if mode=='pr':}}pid{{elif mode=='seq':}}sid{{elif mode=='shot':}}shid{{elif mode=='asset':}}asid{{pass}}={{=project.uuid}}">
+            <input type="file" accept="mp4|m4v|mpg|mov|avi" id="videochooser" name='file' />
+        </form>
+    </div>
+{{pass}}
+
+
+
+
+
+
+{{if is_master or (mode=='seq' and auth.user_id==project.project.supervisor) or (mode=='shot' and auth.user_id == project.sequence.supervisor):}}
+    <li><A title="Change Supervisor" vars="uuid={{=project.uuid}}" id="changeSup" href="#">Change {{=mode}} lead</a></li>
+    <div id="supchangediv" style="display:none">
+    <form method="post" action="?create=true">
+    <select id="prsup" name="prsup">
+    {{users = db(db.auth_user.id).select()}}
+    {{for person in users:}}
+        <option>{{=person.first_name.title()}} {{=person.last_name.title()}} [ {{=person.id}} ]</option>
+    {{pass}}
+
+<option  selected="selected"></option>
+</select>
+</form>
+
+</div>
+{{pass}}
+
+
+{{if (mode=='seq' and auth.user_id == project.project.director) or (mode=='shot' and auth.user_id==project.sequence.project.director) or (mode=='pr' and auth.user_id==project.director) :}}
+
+<li><a id="cdnotes" href="#">Change director Note</a></li>
+
+{{pass}}
+
+
+{{if auth.user_id != project.supervisor:}}
+<li class="nostyle"><a href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light" vars="target={{=project.supervisor.id}}&mtype=message" title="Send a Message" ><b>Message</b> Supervisor</a></li>
+{{pass}}
+
+</ul>
+    </div>
+</div>
+</div>
+<h3>
+<span id="bfbutts">
+{{if mode=='seq':}}
+    {{all = db(db.sequence.project==project.project).select(db.sequence.number, db.sequence.uuid, orderby=db.sequence.number)}}
+{{elif mode=='shot':}}
+    {{all = db(db.shot.sequence==project.sequence).select(db.shot.number, db.shot.uuid, orderby=db.shot.number)}}
+{{pass}}
+
+{{if mode == 'shot' or mode == 'seq':}}
+    {{cards=dict()}}
+    {{for i in all:}}
+        {{cards[i.number]=i.uuid}}
+    {{pass}}
+{{#=len(cards)}}
+<span id="wijlineargauge" title="Item[{{=cards.values().index(project.uuid)+1}}] of {{=len(cards)}} items." style="display:none;float:left;opacity:0.45;" class="ui-corner-all"></span>
+
+   {{if project.number-1 in cards.keys():}}
+    <a title="Previous"
+    {{if mode == 'seq':}}
+    href="{{=URL(vars={'sid':cards[project.number-1]})}}"
+    {{elif mode == 'shot':}}
+    href="{{=URL(vars={'shid':cards[project.number-1]})}}"
+    {{pass}}
+    ><img src="{{=URL(c='static', f='images/skip_backward.png')}}" height="32" width="32" /></a>
+    {{pass}}
+    {{if project.number+1 in cards.keys():}}
+    <a title="Next"
+    {{if mode == 'seq':}}
+    href="{{=URL(vars={'sid':cards[project.number+1]})}}"
+    {{elif mode == 'shot':}}
+    href="{{=URL(vars={'shid':cards[project.number+1]})}}"
+    {{pass}}
+    ><img src="{{=URL(c='static', f='images/skip_forward.png')}}" height="32" width="32" /></a>
+    {{pass}}
+{{pass}}
+</span>
+
+<span style="font-family:terafik">
+{{if mode=='pr':}}
+
+
+<div class='story'>
+<A title="View Storyline" href="{{=URL(c='utils', f='story', vars={'pid':project.uuid})}}"><img src="{{=URL(c='static', f='images/purple_icon.png')}}" height="32" width="32" /></a>
+</div>
+
+    {{=project.name.capitalize()}}
+{{elif mode=='seq':}}
+    Sequence {{=project.number}} - <a style="color:grey;font-size:14pt" href="{{=URL(f='prview', vars={'pid':project.project.uuid})}}">{{=project.project.name.capitalize()}}</a>
+{{elif mode=='shot':}}
+    Shot {{=project.number}} - <a href="{{=URL(f='sqview', vars={'sid':project.sequence.uuid})}}" style="color:grey;font-size:14pt;">Sequence {{=project.sequence.number}}</a> - <a href="{{=URL(f='prview', vars={'pid':project.sequence.project.uuid})}}" style="color:grey;font-size:14pt">{{=project.sequence.project.name.capitalize()}}</a>
+{{pass}}
+</span>
+
+</h3>
+<div class="mform">
+    <div id="prprog">
+    <span style="color:#30306A">Overall Progress</span><br/>
+        <div id="progdiv">
+
+            <div id="progressbar" style=""></div>
+        </div>
+        <div>
+        {{if project.qr:}}
+            <a rel="light" title="Quick Response Code" vars="fid={{=project.qr.uuid}}" href="{{=URL(c='utils', f='img_viewer')}}"><img alt="QRCODE" title="Quick Response Code" width="105" height="105" src="{{=URL(c='static', f='uploads/%s' % project.qr.name)}}" /></a>
+        {{pass}}
+        </div>
+    </div>
+    
+    <table id="prtable">
+        <tr><td><b>{{if mode=='pr':}}Project{{elif mode=='seq':}}Sequence{{pass}} ID</b>:</td><td>{{=project.uuid}}</td><tr>
+        {{if mode == 'pr':}}
+        <tr><td><b>Members:</b>:</td><td>
+                {{users=db(db.auth_user.id).select(db.auth_user.id, db.auth_user.last_name, db.auth_user.first_name)}}
+                {{for user in users:}}
+                {{if auth.has_membership(auth.id_group('pr-%s' % project.uuid), user.id):}}
+                <A href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light"
+                    vars="target={{=user.id}}&mtype=message" title="Send a Message to {{=user.first_name.title()}}"
+                >{{=user.last_name.title()}}</a>
+                {{pass}}
+
+                {{pass}}
+                </td><tr>
+        <tr><td><b>Project Path</b>:</td><td>{{=project.path}}</td><tr>
+        {{pass}}
+        <tr><td><b>Creation</b>:</td><td>{{=project.creation_date}} - (<b>{{=prettydate(project.creation_date, T)}}</b>) </td><tr>
+        <tr><td><b>Last Update</b>:</td><td>{{=prettydate(project.modification_date, T) or 'N/A'}} </td><tr>
+        <tr><td><b>{{if mode=='pr':}}Supervisor{{elif mode=='seq':}}Sequence Lead{{elif mode=='shot':}}Shot Lead{{elif mode=='asset':}}Owner{{pass}}</b>:</td><td>{{if project.supervisor:}}<a href="mailto:{{=project.supervisor.email}}"><b>{{=project.supervisor.first_name.title()}} {{=project.supervisor.last_name.title()}}</b></a>{{pass}}</td><tr>
+        {{if mode == 'pr':}}
+        <tr><td><b>FPS</b>:</td><td>{{=project.fps}}</td><tr>
+        <tr><td><b>Format</b>:</td><td>{{=project.size}}</td><tr>
+        <tr><td><b>Sequences</b>:</td><td>{{=len(seq_list)}}</td><tr>
+        {{pass}}
+        {{if mode=='pr':}}
+<tr><td><b>Director</b>:</td><td>{{if project.director:}}<a href="mailto:{{=project.director.email}}"><b>{{=project.director.first_name.title()}} {{=project.director.last_name.title()}}</b></a>{{pass}}</td><tr>
+        {{pass}}
+        {{if mode == 'pr' or mode == 'seq':}}
+        <tr><td><b>Shots</b>:</td><td>{{=len(shots)}}</td><tr>
+        {{pass}}
+        <tr><td><b>Frames</b>:</td><td>
+        {{if project.frames:}}
+            {{=project.frames}}
+            {{if mode=='shot':}}
+            ( ~ {{=round(project.frames/float(project.sequence.project.fps), 1)}} seconds)
+            {{elif mode=='seq':}}
+            ( ~ {{=round(project.frames/float(project.project.fps), 1)}} seconds)
+            {{elif mode=='pr':}}
+            ( ~ {{=round(project.frames/float(project.fps), 1)}} seconds)
+            {{pass}}
+
+        {{pass}}
+        </td><tr>
+        <tr><td><b>Assets count</b>:</td><td>{{=len(assets)}}</td><tr>
+                <tr><td><b>Preview Status</b>:</td><td>
+                        {{if not (project.preview or project.dirty):}}
+                        Not Available
+                        {{else:}}
+                            {{if not project.dirty:}}
+                                <span style="color:darkgreen;font-weight:bold;">Ready</span>
+                            {{elif project.preview and project.preview.process.islocked:}}
+                                <span style="color:darkred;font-weight:bold;">Rendering</span>
+                            {{else:}}
+                                <span style="color:#DDB336;font-weight:bold;">Waiting for Render</span>
+                            {{pass}}
+                        {{pass}}        
+                        
+                </td><tr>
+        <tr ><td><b>Director Note</b>:</td><td><p id="dnt" 
+        {{import string}}
+        {{asc = string.ascii_lowercase}}
+        style="
+        {{if project.description and project.description[0].lower() in asc:}}
+            direction:ltr;
+        {{else:}}
+            direction:rtl;
+        {{pass}}
+        text-align:justify">{{=project.description or ''}}</p></td><tr>
+    </table>
+
+    <div class="prSeqList"
+        {{if (mode=='pr' and seq_list) or (mode=='seq' and shots):}}
+        style=""
+        {{else:}}
+        style="display:none;"
+        {{pass}}
+        >
+{{if project.chart1:}}
+    <div id="chart1">
+    <a class="noshadow" rel="light" title="Duration Statistics" vars="fid={{=project.chart1.uuid}}" href="{{=URL(c='utils', f='img_viewer')}}"><img width="180" height="180" src="{{=URL(c='static', f='uploads/%s' % project.chart1.name)}}" /></a>
+    </div>
+    {{pass}}
+<h4>
+{{if mode=='pr':}}
+    Sequence List: <small style="color:#ccc">({{=len(seq_list)}})</small>
+{{elif mode=='seq':}}
+    Shot List:
+{{elif mode=='shot':}}
+    Assets:
+{{pass}}
+</h4>
+{{if mode=='pr':}}
+    {{for seq in seq_list:}}
+        <div class="shbinfo">
+        <a {{if seq.preview or seq.dirty:}}
+        
+            {{if not seq.dirty:}}
+                class="sp green tooltip" onmouseover="tooltip.add(this,'tt_{{=seq.uuid}}')"
+            {{else:}}
+                class="sp yellow"
+            {{pass}}
+            {{if seq.frames:}}
+                title="{{=seq.frames}} Frames"
+            {{pass}}
+        {{pass}} 
+            class="sp"
+        style="width:{{=12+(seq.frames or 1)/18}}px;" href="{{=URL(f='sqview', vars={'sid':seq.uuid, 'pid':project.uuid})}}">{{=seq.number}}</a>
+        </div>
+        {{if seq.thumb and seq.preview:}}
+            <div id="tt_{{=seq.uuid}}" style="display:none;">
+                 <a href="{{=URL(f='sqview', vars={'sid':seq.uuid})}}" ><img width="256" height="144" src="{{=URL(c='static', f='uploads/%s.%s' % (seq.thumb.uuid, seq.thumb.ext))}}" 
+                 style="border:2px solid #333;border-top:15px solid #333; border-bottom:15px solid #333;float:right;" /></a>
+                <ul>
+                <li>Name: <b>Sequence{{=seq.number}}</b></li>
+                <li>Duration: <b>{{=seq.frames}}</b> Frames</li>
+                <li>Updated: <b>{{=prettydate(seq.modification_date, T)}}</b></li>
+                <li>Sequence Lead: <a href="mailto:{{=seq.supervisor.email}}"><b>{{=seq.supervisor.first_name.title()}} {{=seq.supervisor.last_name.title()}}</b></a></li>
+                <li><A title="Click to play preview of sequence{{=seq.number}}" href="{{=URL(f='video', vars={'vname':seq.preview.name})}}" >Preview</a></li>
+                </ul>
+            </div>
+            
+        {{pass}}
+
+
+    {{pass}}
+{{elif mode=='seq':}}
+    {{for shot in shots:}}
+        <div class="shbinfo">
+
+        <a {{if shot.preview or shot.dirty:}}
+            {{if shot.preview.process.isfinished and not shot.preview.process.islocked:}}
+                class="sp green tooltip" onmouseover="tooltip.add(this,'tt_{{=shot.uuid}}')"
+                
+            {{else:}}
+                class="sp yellow"
+                title="Processing Preview ..."
+            {{pass}}
+        {{pass}}
+        class="sp"
+        style="width:{{=12+(shot.frames or 1)/2}}px;" href="{{=URL(f='shotview', vars={'shid':shot.uuid})}}"
+        
+        >{{=shot.number}}</a>
+        </div>
+
+        {{if shot.thumb and shot.preview:}}
+            <div class="popup" id="tt_{{=shot.uuid}}" style="display:none;">
+                 <a href="{{=URL(f='shotview', vars={'shid':shot.uuid})}}"><img width="256" height="144" src="{{=URL(c='static', f='uploads/%s.%s' % (shot.thumb.uuid, shot.thumb.ext))}}" 
+                 style="border:2px solid #333;border-top:15px solid #333; border-bottom:15px solid #333;float:right;" /></a>
+                <ul >
+                <li>Name: <b>Shot{{=shot.number}}</b></li>
+                <li>Duration: <b>{{=shot.frames}}</b> Frames</li>
+                <li>Updated: <b>{{=prettydate(shot.modification_date, T)}}</b></li>
+                <li>Shot Lead: <a href="mailto:{{=shot.supervisor.email}}"><b>{{=shot.supervisor.first_name.title()}} {{=shot.supervisor.last_name.title()}}</b></a></li>
+                <li><A title="Click to play preview of shot{{=shot.number}}" href="{{=URL(f='video', vars={'vname':shot.preview.name})}}" >Preview</a></li>
+                </ul>
+            </div>
+        {{pass}}
+
+    {{pass}}
+{{elif mode=='shot':}}
+    {{for id in project.assets:}}
+        {{asdb = db(db.asset.id==id).select().first()}}
+        <a class="sp" href="{{=URL(f='asset', vars={'asid':asdb.uuid})}}">{{=asdb.name}}</a>
+    {{pass}}
+{{pass}}
+
+    <div id="latestchanges">
+        <h6>Latest Updates:</h6>
+        {{if mode=='seq':}}
+            {{latest = db(db.shot.sequence==project).select(orderby=~db.shot.modification_date)}}
+            {{if latest:}}
+            <A  class="sp" onmouseover="tooltip.add(this,'tt_{{=latest[0].uuid}}')" href="{{=URL(f='shotview', vars={'shid':latest[0].uuid})}}">{{=latest[0].number}}</a>
+            {{pass}}
+        {{elif mode=='pr':}}
+            {{latest = db(db.sequence.project==project).select(orderby=~db.sequence.modification_date)}}
+            {{if latest:}}
+            <A  class="sp" onmouseover="tooltip.add(this,'tt_{{=latest[0].uuid}}')" href="{{=URL(f='sqview', vars={'sid':latest[0].uuid})}}">{{=latest[0].number}}</a>
+            {{pass}}
+
+        {{pass}}
+
+    </div>
+
+</div>
+
+
+    <div>
+{{if mode=='!shot':}}
+    <!-- ##################  AJAX SHOT CHECK LISTS  #################### -->
+    <div id="shdetail_holder_div">
+        <img  width="220" height="19" src="{{=URL(c='static', f='images/ajax-loader-2.gif')}}" />
+    </div>
+    <div id="shstat_holder_div">
+        <img  width="220" height="19" src="{{=URL(c='static', f='images/ajax-loader-2.gif')}}" />
+    </div>
+<!-- ############################################################ -->
+{{pass}}
+
+<!--
+##############################################################################################################################################
+########################################                commnets part                   ###################################################
+##############################################################################################################################################
+-->
+
+<table>
+    <tr>
+        <td>
+
+<div id="attach_viewer" style="margin:auto;margin-top:0px;margin-bottom:10px;border:1px solid #ccc;width:400px;min-hight:600px">
+<iframe id="attach_iframe" height="310" width="400" seamless>
+</iframe>
+<img id="attach_inline_img_viewer" width="400" src="" /></div>
+</div>
+
+<div class="comment_area" style="">
+<img style="float:right;" src="{{=URL(c='static', f='images/Comments-icon.png')}}" height="32" width="32" />
+{{=LOAD(content='', c='utils',f='comment_core', vars={'item':project.uuid}, ajax=False)}}
+</div>
+
+
+<!--
+##############################################################################################################################################
+########################################                attach    part                   ###################################################
+##############################################################################################################################################
+-->
+</td>
+<td>
+<div id="attach_div">
+{{=LOAD(content='', c='home',f='attachments', vars={'ipid':project.uuid, 'mode':mode, 'name':project.name}, ajax=False)}}
+</div>
+
+</td>
+</tr>
+</table>
+
+
+
+<script type="text/javascript">
+    function details(){
+    ajax('{{=URL(c="utils", f="shot_details", vars={"shid":project.uuid})}}' , [''], 'shdetail_holder_div');
+        } ;
+
+
+    function stats(){
+        ajax('{{=URL(c="utils", f="shot_stats", vars={"shid":project.uuid})}}' , [''], 'shstat_holder_div');
+    };
+
+    function ranger(){
+        {{if mode == 'shot' or mode == 'seq':}}
+            $("#wijlineargauge").wijlineargauge({ duration: 100, width: 100, height: 38, value: {{=cards.values().index(project.uuid)+1}}, max: {{=len(cards)}}, min: 1,shape: "tri"});
+            $("#wijlineargauge").wijlineargauge("option", "pointer", {length: 0.65});
+            $("#wijlineargauge").fadeIn(1000);
+        {{pass}}
+    };
+
+ $(document).ready(function(){
+
+    //Shot position bar:
+
+    //progress bar
+
+        setTimeout('ranger();', 2000);
+        $("#progressbar").wijprogressbar({ value: 0});
+    //
+
+    $('#thumbplace').fadeIn(1000);
+    $('#comment_area').fadeIn(1500);
+    {{if mode=='shot':}}
+        details();
+        stats();
+        setInterval('details()', 120000);  //reload every two minutes
+        setInterval('stats()', 86400);  //reload every two minutes
+    {{pass}}
+    {{if is_master and mode=='pr':}}
+    $('#prdelbut').click(function(){
+        //alert(pwd);
+        var state = confirm('Are you sure you want to delete "{{=project.name.title()}}" project?');
+        //alert(state);
+        if (state)
+        {
+            ajax('delete_project?pid={{=project.uuid}}', [''], 'messages');
+        }
+    });
+    {{elif mode=='seq' and (is_master or auth.user_id==project.project.supervisor):}}
+    $('#seqdelbut').click(function(){
+        //alert(pwd);
+        var state = confirm('Are you sure you want to delete "Sequence {{=project.number}}"?');
+        //alert(state);
+        if (state)
+        {
+            ajax('delete_sequence?sid={{=project.uuid}}', [''], 'messages');
+        }
+    });
+
+    {{pass}}
+{{if is_master or auth.user_id == project.owner or auth.has_membership('pr-%s' % project.uuid, auth.user_id):}}
+
+        
+        $('#photochooser').change(function(){
+                $('#thumbform').submit();
+            });
+
+
+{{pass}}
+{{if (mode == 'shot' or mode == 'seq') and (is_master or auth.user_id == project.supervisor):}}
+
+        $('#preview_delete').click(function(){
+            var state = confirm('Are you sure you want to remove preview"?');
+            //alert(state);
+            if (state)
+            {
+                {{if mode == 'shot':}}
+                    ajax('remove_preview?shotid={{=project.uuid}}', [''], 'messages');
+                {{elif mode == 'seq':}}
+                    ajax('remove_preview?sid={{=project.uuid}}', [''], 'messages');
+                {{pass}}
+            }
+                });
+
+        $('#videochooser').change(function(){
+                $('#videoform').submit();
+                $('#vid_resp').text('(Waiting for process ...)')
+                //ajax()
+                });
+{{pass}}
+{{if is_master or ( (mode=='seq' and auth.user_id==project.project.supervisor) or (mode=='shot' and auth.user_id==project.sequence.supervisor) ):}}
+    $('#changeSup').click(function(){
+        $('#supchangediv').toggle()
+    });
+
+    $('#prsup').change(function(){
+        var selected = $('#prsup option:selected').text();
+        {{if mode=='seq':}}
+            ajax("{{=URL(f='changesup', vars={'sid':project.uuid})}}&sup="+selected, [''], 'messages');
+        {{elif mode=='shot':}}
+            ajax("{{=URL(f='changesup', vars={'shid':project.uuid})}}&sup="+selected, [''], 'messages');
+        {{elif is_master and mode=='pr':}}
+            ajax("{{=URL(f='changesup', vars={'pid':project.uuid})}}&sup="+selected, [''], 'messages');
+        {{pass}}
+    });
+{{pass}}
+{{if mode=='pr':}}
+    $('#addSeq').click(function(){
+        var numOfNewSeqs = prompt("Enter Number of sequences you want to add:","1");
+        if (numOfNewSeqs){
+        ajax('{{=URL(c="home", f="add_new_sequences", vars={"pid":project.uuid})}}&nons='+numOfNewSeqs,[''], 'messages');
+        }
+    });
+{{elif mode=='seq':}}
+    $('#addShot').click(function(){
+        var numOfNewShots = prompt("Enter Number of shots you want to add:","1");
+        if (numOfNewShots){
+        ajax('{{=URL(c="home", f="add_new_shots", vars={"sid":project.uuid})}}&nons='+numOfNewShots,[''], 'messages');
+        }
+    });
+{{elif mode=='shot':}}
+    $('#addAsset').click(function(){
+        var prefix = "{{=auth.user.first_name[0]}}{{=auth.user.last_name[0]}}_{{=''.join(time.ctime().split()[:3])}}_"
+        var asname = prompt("Enter a name for this asset:",prefix);
+        if (asname){
+            if (asname !=prefix){
+                ajax('{{=URL(c="home", f="add_asset", vars={"shid":project.uuid})}}&asname='+asname,[''], 'messages');
+            }
+            else{
+                alert('{{=auth.user.first_name.title()}}! You need to specify a unique name for your asset.')
+            }
+        }
+    });
+
+{{pass}}
+
+{{if is_master or ( (mode=='seq' and auth.user_id == project.project.director) or (mode=='shot' and auth.user_id==project.sequence.project.director) or (mode=='pr' and auth.user_id==project.director)) :}}
+
+    $('#cdnotes').click(function(){
+        var directorNotes = prompt("Enter Your Notes:","");
+        if (directorNotes){
+           ajax('{{=URL(f="changeDNotes", vars={mode:project.uuid})}}&note='+directorNotes, [''], 'dnt');
+        }
+    });
+
+{{pass}}
+
+
+
+ });
+</script>

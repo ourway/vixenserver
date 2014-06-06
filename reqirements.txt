@@ -1,0 +1,6 @@
+pip
+wheel
+pycha
+lxml
+Pillow
+docx

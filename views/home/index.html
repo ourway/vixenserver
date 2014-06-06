@@ -1,0 +1,154 @@
+{{extend 'layout.html'}}
+{{person = db(db.auth_user.id == auth.user_id).select(db.auth_user.first_name).first()}}
+<div id='intropage_div'>
+    <h4 align="center" class="blueButLabel" ><a title="Click to toggle" onclick="$('#allprs').toggle(100)" href="#">Hey <b>{{=person.first_name.title()}}</b>! here is your projects {{if auth.has_membership('master', auth.user_id):}}[Owner Mode]{{pass}}</a></h4>
+
+<div style="" id="allprs">
+<div style="background:rgba(245,245,245,.8);padding:10px;display:inline-block">
+{{prs=db(db.project.id).select(orderby=db.project.modification_date)}}
+    <ol>
+    {{for i in prs:}}
+    {{if auth.has_membership('pr-%s'%i.uuid, auth.user_id) or auth.has_membership('master', auth.user_id):}}
+    {{if i.isactive:}}
+        <li class="frontlist"><a href="{{=URL(f='prview?pid=%s'%i.uuid)}}">
+        {{if i.thumb:}}
+        <img class="thumblink" src="{{=URL(c='static', f='uploads/%s' % i.thumb.name)}}" width="128" height="72" />
+        {{else:}}
+        <img class="thumblink" src="{{=URL(c='static', f='images/P_Movie.svg.png')}}" width="128" height="72" />
+
+        {{pass}}
+        {{=i.name.capitalize()}}</a><br/>
+        <span style="margin-top:-30px;margin-left:39%;float:left">
+        <small>By: {{=i.director.first_name.title()}} {{=i.director.last_name.title()}}</small>
+        {{if not auth.has_membership('pr-%s'%i.uuid, auth.user_id):}}
+        <small style="color:#cc0000">[M]</small>
+        {{pass}}
+        </span>
+        <a style="text-decoration:none" {{if i.preview:}} href="{{=URL(f='video', vars={'vname':i.preview.name})}}" {{pass}}><small style="color:grey;"><b>{{=prettydate(i.modification_date, T) or 'Not modified yet!'}} </b></small></a>
+        </li>
+    {{pass}}
+    {{pass}}
+    {{pass}}
+    </ol>
+
+</div>
+</div>
+
+<!--
+
+<div style="padding:20px;">
+
+<div style="display:inline-block">
+{{producerdb=db(db.project.producer==auth.user_id).select()}}
+{{if producerdb:}}
+    <h5 style="color:#515151">&bull; You are <b>producer</b> of:</h5>
+    <ol>
+    {{for i in producerdb:}}
+       <li> <a style="text-decoration:none;font-family:terafik" href="{{=URL(f='prview', vars={'pid':i.uuid})}}" >
+       {{if i.thumb:}}
+        <img class="thumblink" src="{{=URL(c='static', f='uploads/%s' % i.thumb.name)}}" width="128" height="72" />
+        {{else:}}
+        <img class="thumblink" src="{{=URL(c='static', f='images/P_Movie.svg.png')}}" width="128" height="72" />
+
+        {{pass}}
+
+       <b>{{=i.name.title()}}</b> Project</a>
+       
+       
+        {{if i.preview:}}
+            <a style="border:1px solid #aaa;-webkit-border-radius:2px;text-decoration:none;background:#FFDA4F;padding:5px;font-weight:bold;color:#515151;" href="{{=URL(f='video', vars={'vname':i.preview.name})}}">Preview</a>
+       {{pass}}
+       
+       </li>
+    {{pass}}
+    </ol>
+{{pass}}
+
+
+
+
+
+{{psupdb=db(db.project.supervisor==auth.user_id).select()}}
+{{if psupdb:}}
+    <h5 style="color:#515151">&bull; You are <b>supervisor</b> of:</h5>
+    <ol>
+    {{for i in psupdb:}}
+        
+       <li> <a style="text-decoration:none;font-family:terafik;" href="{{=URL(f='prview', vars={'pid':i.uuid})}}" >
+        {{if i.thumb:}}
+            <img class="thumblink" src="{{=URL(c='static', f='uploads/%s' % i.thumb.name)}}" width="128" height="72" />
+        {{else:}}
+            <img class="thumblink" src="{{=URL(c='static', f='images/P_Movie.svg.png')}}" width="128" height="72" />
+        {{pass}}
+
+       <b>{{=i.name.title()}}</b> Project</a>
+       
+           {{if i.preview:}}
+            <a style="border:1px solid #aaa;-webkit-border-radius:2px;text-decoration:none;background:#FFDA4F;padding:5px;font-weight:bold;color:#515151;" href="{{=URL(f='video', vars={'vname':i.preview.name})}}">Preview</a>
+       {{pass}}
+       </li>
+    {{pass}}
+    </ol>
+{{pass}}
+
+
+{{pddb=db(db.project.director==auth.user_id).select()}}
+{{if pddb:}}
+    <h5 style="color:#515151">&bull; You are <b>director</b> of:</h5>
+    <ol>
+    {{for i in pddb:}}
+        
+       <li> <a style="text-decoration:none;font-family:terafik" href="{{=URL(f='prview', vars={'pid':i.uuid})}}" >
+        {{if i.thumb:}}
+            <img class="thumblink" src="{{=URL(c='static', f='uploads/%s' % i.thumb.name)}}" width="128" height="72" />
+        {{else:}}
+            <img class="thumblink" src="{{=URL(c='static', f='images/P_Movie.svg.png')}}" width="128" height="72" />
+        {{pass}}
+
+       <b>{{=i.name.title()}}</b> Project</a>
+       
+           {{if i.preview:}}
+            <a style="border:1px solid #aaa;-webkit-border-radius:2px;text-decoration:none;background:#FFDA4F;padding:5px;font-weight:bold;color:#515151;" href="{{=URL(f='video', vars={'vname':i.preview.name})}}">Preview</a>
+       {{pass}}
+
+       
+       </li>
+    {{pass}}
+    </ol>
+{{pass}}
+
+</div>
+
+
+{{ssupdb=db(db.sequence.supervisor==auth.user_id).select()}}
+{{if ssupdb:}}
+    <h5 style="color:#515151">&bull; You are <b>sequence lead</b> of:</h5>
+    <ul>
+    {{prslist = set()}}
+    {{sqlead = dict()}}
+    {{for i in ssupdb:}}
+        {{prslist.add(i.project)}}
+    {{pass}}
+    {{for pr in prslist:}}
+            {{sqlead[pr.name]=[(i.number, i.uuid, i.project.uuid) for i in ssupdb if i.project==pr]}}
+        {{pass}}
+    {{for i in sqlead:}}
+        <li>
+        Sequence 
+           {{for k in sqlead[i]:}}
+               <A  class="numberlink" style="color:white" href="{{=URL(f='sqview', vars={'sid':k[1]})}}"> {{=k[0]}} </a>
+           {{pass}}
+           of {{=i.title()}}</a> project
+        </li>
+    {{pass}}
+
+    </ul>
+{{pass}}
+
+
+
+
+</div>
+</div>
+
+-->

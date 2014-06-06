@@ -1,0 +1,36 @@
+{{extend 'layout.html'}}
+
+
+<div id="crew_div">
+    <h1 align="center" style="font-family:ubuntu">Send a message!</h1>
+<img style="float:right" width="64" height="64" src="{{=URL(c='static', f='images/User_group.png')}}" />
+
+<ul>
+{{for i in crewdb:}}
+    {{if not auth.user_id == i.id:}}
+    <A href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light"
+    vars="target={{=i.id}}&mtype=message" title="Send a Message"
+    >
+    
+    <li>
+    <span class="showoff" style="font-size:25pt;">{{=i.first_name.title()[0]}}</span>{{=i.first_name.title()[1:]}}
+    <span class="showoff" style="font-size:25pt;">{{=i.last_name.title()[0]}}</span>{{=i.last_name.title()[1:]}}
+    
+    </li></a>
+    {{pass}}
+{{pass}}
+</ul>
+</div>
+<!--
+    <div id="shstat_holder_div">
+        <img  width="220" height="19" src="{{=URL(c='static', f='images/ajax-loader-2.gif')}}" />
+    </div>
+-->
+<script type="text/javascript">
+    function stats(){
+        //ajax('{{=URL(c="utils", f="crew_activity")}}' , [''], 'shstat_holder_div');
+    };
+ $(document).ready(function(){
+    stats();
+});
+</script>

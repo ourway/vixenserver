@@ -1,0 +1,18 @@
+{{extend 'layout.html'}}
+<div style="padding:10px;margin:10px;border:1px solid #ccc;min-height:400px;">
+<form action="{{=URL(f='do_save_settings')}}" method="get">
+    <table>
+        <tr>
+            <td>Enter your Maya Auth Key:</td>
+            <td><input name="vAuth" type="password" {{if vAuth:}} {{if vAuth:}}value="{{=vAuth}}"{{pass}} {{pass}} Placeholder="Copy and Paste from Maya"/></td>
+        </tr>
+
+        <tr>
+        <td></td>
+        <td><input type="submit" value="Save Settings"/></td>
+        </tr>
+
+    </table>
+
+</form>
+</div>

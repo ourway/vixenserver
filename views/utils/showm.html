@@ -1,0 +1,68 @@
+<div id="showm_div">
+
+<span style="color:lightgrey">Message ID: {{=message.uuid}}</span>
+
+<h6>From: <a href="mailto:{{=message.sender.email}}">
+{{=message.sender.first_name.title()}}
+{{=message.sender.last_name.title()}}</a> <small style="color:#aaa">{{=message.sender.email}}</small></h6>
+<h6>To &nbsp;: <a href="mailto:{{=message.target.email}}">
+{{=message.target.first_name.title()}}
+{{=message.target.last_name.title()}}</a> <small style="color:#aaa">{{=message.target.email}}</small></h6>
+
+<small title="{{=message.creation_date}}">
+<span style="color:grey">Sent:</span> {{=prettydate(message.creation_date, T)}}
+{{if not message.unread and auth.user_id==message.sender:}}
+    , <span style="color:grey">Read by {{=message.target.first_name.title()}}:</span>
+    {{=prettydate(message.read_date, T)}}
+{{pass}}
+</small>
+<div 
+style="
+{{import string}}
+{{asc = string.ascii_letters}}
+{{print message.body.split()[0][0:1]}}
+{{if message.body and not message.body.split()[0][0:1] in asc:}}
+    direction:rtl;
+    text-align:right;
+{{pass}}
+
+
+min-height:120px;border:1px solid #ccc; margin:10px;background:#fff;padding:20px;">
+{{=XML(message.body)}}
+</div>
+<div id="maatachs">
+{{item=db(db.item.pid==message.uuid).select().last()}}
+{{if item and item.vfiles:}}
+<h6>Attachment:</h6>
+<br/>
+    {{for i in item.vfiles:}}
+        {{fdb = db(db.vfile.id==i).select().first()}}
+        {{if fdb:}}
+            <li>
+        {{if fdb.ext=='jpg' or fdb.ext=='png' or fdb.ext=='tif':}}
+        <img src="{{=URL(c='static', f='uploads/%s'%fdb.name)}}" height="128" width="128"/>
+        <a title="Image Viewer" rel="light" vars="fid={{=fdb.uuid}}" href="{{=URL(c='utils', f='img_viewer')}}" style="background:#ccc;color:#313131">View</a>
+
+        {{pass}}
+        <a class="vfile_comment" 
+            href="{{=URL(c='utils', f='vfile_comments', vars={'uuid':fdb.uuid})}}"
+            title="go to file comment page" target="_new" onclick="vfile_comment('{{=fdb.uuid}}')" ><b>{{=fdb.rawname[:25]}}</b></a>
+            </li>
+        {{pass}}
+    {{pass}}
+
+
+{{pass}}
+
+</div>
+<br/>
+<button>
+    <A href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light"
+    vars="target={{=message.sender.id}}&mtype=message" title="Send a Message"
+    >Reply</a>
+
+</button>
+
+</div>
+
+

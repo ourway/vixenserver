@@ -1,0 +1,65 @@
+<style type="text/css">
+{{if request.vars.vid:}}
+    .light_overlay{ background:black; padding:1px; }
+    .light_bbar{ background:#333; }
+    .light_footer{ background:#333; }
+    .light_footer a{ color:#fff;font-weight:normal; }
+{{pass}}
+</style>
+
+        <div class="light_border" style="">
+            <div class="light_bbar"><p> {{=request.vars._t.title()}}</p></div>
+
+            <div style="border:1px solid #3B5998;">
+                <div class="light_overlay" style="">
+                    {{include}}
+                            </div>
+                <div class="light_footer">
+                <a style="font-size:11px;" title="Visit our help center" href="{{=URL(r=request, c='home', f='help', vars={'_ref':'lb', 'q':request.vars._t})}}">Help Center</a>
+                <div id="lb_but_right_div" style="float:right;"><a title="Close" class="close_light"><img alt="close button" height="16" width="16" src={{=URL(r=request, c='static', f='images/cb.png')}} /></a></div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+
+
+
+
+    $(document).ready(function(){
+
+
+
+
+
+
+
+        $('.close_light img').mouseover(function(){
+            $(this).attr('src', '{{=URL(r=request, c="static", f="images/cbh.png")}}');
+        });
+        $('.close_light img').mouseout(function(){
+            $(this).attr('src', '{{=URL(r=request, c="static", f="images/cb.png")}}');
+        });
+
+            $('*[rel*=confirmation]').live('click',function(){
+                 $('#whole_box').fadeOut(500);
+                setTimeout("$('#whole_box').trigger('close')", 600);
+                //setTimeout("$(document).find('div[rel*=lbc]').remove()", 620);
+                setTimeout("window.location.reload();", 650);
+                //alert(al);
+            });
+            $('.close_light').live('click',function(){
+                $('#whole_box').fadeOut(500);
+                setTimeout("$('#whole_box').trigger('close');",600);
+                setTimeout("$('#whole_box').remove();",620);
+                //alert(al);
+            });
+            $('#whole_box').fadeIn(); //show the box after everything
+
+            $('*[id*=lbc_]').trigger('reposition'); //reposition
+
+
+    window.onload =  $('*[id*=lbc_]').trigger('reposition');
+    window.onresize = $('*[id*=lbc_]').trigger('reposition');
+
+});
+</script>

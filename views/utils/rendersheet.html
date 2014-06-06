@@ -1,0 +1,104 @@
+{{extend 'layout.html'}}
+
+<h4 align="center" style="background:#ccc;padding:10px;"><small style="color:#999">Render Checklist for </small><br/>{{=prdb.name.upper()}}</h4>
+{{for seq in seqs:}}
+
+			{{shots = db(db.shot.sequence==seq).select(orderby=db.shot.number)}}
+		{{if shots:}}
+			<div style="border-left:3px solid #ccc" id="seq_div_{{=seq.number}}">
+			<h5 class="rsheet_header" align="center" onclick="$(this).parent('div').children('div').toggle(200);" >Sequence <b>{{=seq.number}}</b></h5>
+		<div class="rsheettable">
+		<form action="{{=URL(c='utils', f='update_rendersheet')}}" method="post">
+			<input style="margin-left:5%;margin-bottom:15px;margin-top:0px;"  type="submit" value="Save Changes" />
+			<input name="sequuid" type="hidden" value="{{=seq.uuid}}" />
+			<table>
+				<th>Shot</th>
+				<th>Range</th>
+				<th>Preview</th>
+				<th>Composite</th>
+				<th>Render</th>
+				<th>Fixed Cam</th>
+				<th>Director Check</th>
+				<th>Description</th>
+
+				{{for shot in shots:}}
+					<tr class="{{if shot.number%2:}}evenrow{{else:}}oddrow{{pass}}">
+						<td style="background:#ccc;border-top:1px solid #bbb;"><a href="{{=URL(c='home', f='shotview', vars={'shid':shot.uuid})}}"><b>{{=shot.number}}</b></a></td>
+						<td>
+							<input type="number"
+
+							{{if not shot.animation_sup == auth.user_id:}}
+								readonly="readonly"
+							{{pass}}
+
+							autocomplete="off" name="shot_{{=shot.id}}_startrange" value="{{=shot.startrange or ''}}" class="rrange" /> - 
+							<input type="number"
+							{{if not shot.animation_sup == auth.user_id:}}
+								readonly="readonly"
+							{{pass}}
+							autocomplete="off" name="shot_{{=shot.id}}_endrange" value="{{=shot.endrange or ''}}" class="rrange" />
+						</td>
+						<td {{if shot.preview_iscompleted:}}style="background:#E9FFBA;"{{pass}}><input name="shot_{{=shot.id}}_preview_iscompleted" type="radio" 
+							{{if shot.preview_iscompleted:}}
+								checked="checked"
+							{{pass}}
+							{{if not shot.preview_sup == auth.user_id:}}
+								disabled="disabled"
+							{{pass}}
+							/></td>
+						<td {{if shot.compositing_iscompleted:}}style="background:#E9FFBA;"{{pass}}><input name="shot_{{=shot.id}}_compositing_iscompleted" type="radio" 
+							{{if shot.compositing_iscompleted:}}
+								checked="checked"
+							{{pass}}
+							{{if not shot.compositing_sup == auth.user_id:}}
+								disabled="disabled"
+							{{pass}}
+						/></td>
+						<td {{if shot.rendering_iscompleted:}}style="background:#E9FFBA;"{{pass}} ><input name="shot_{{=shot.id}}_rendering_iscompleted" type="radio" 
+							{{if shot.rendering_iscompleted:}}
+								checked="checked"
+							{{pass}}
+							{{if not shot.rendering_sup == auth.user_id:}}
+								disabled="disabled"
+							{{pass}}
+						/></td>
+						<td><input name="shot_{{=shot.id}}_fixed_cam" type="checkbox" 
+							{{if shot.fixed_cam:}}
+								checked="checked"
+							{{pass}}
+							{{if not shot.animation_sup == auth.user_id:}}
+								disabled="disabled"
+							{{pass}}
+						/></td>
+						<td {{if shot.rendering_isconfirmed:}}style="background:#E9FFBA;"{{pass}}  ><input name="shot_{{=shot.id}}_rendering_isconfirmed" type="checkbox" type="radio" 
+							{{if shot.rendering_isconfirmed:}}
+								checked="checked"
+							{{pass}}
+							{{if not prdb.director == auth.user_id:}}
+								disabled="disabled"
+							{{pass}}
+						/></td>
+						<td><input name="shot_{{=shot.id}}_rendering_desc" 
+							value="{{=shot.rendering_desc or ''}}"
+							type="text" style="width:256px;font-size:11px;height:10px;" 
+							{{if not shot.rendering_sup == auth.user_id:}}
+								readonly="readonly"
+							{{pass}}
+							autocomplete="off" placeholder="Description of shot {{=shot.number}}"/></td>
+					</tr>
+				{{pass}}
+			</table>
+		</form>
+			<div style="background:#fff;width:810px;margin:auto;padding:10px;border:1px solid #ccc;">
+				<textarea style="width:350px;background:#F5F9FA;border: 0pt none; outline: 0pt none;" placeholder="Write a description for sequence {{=seq.number}}"></textarea>
+
+				<div style="float:right;width:400px;">
+
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+		{{pass}}	
+{{pass}}

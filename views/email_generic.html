@@ -1,0 +1,30 @@
+
+<html>
+<body>
+<div style="background:#f1f1f1;padding:20px;">
+<div style="font: normal normal normal 1.15em 'Trebuchet MS', Helvetica, sans-serif;color:#515151;direction:ltr;cursor:default;border:6px solid #9EB8E0;width:550px;min-height:300px;background:#f8f8f8;padding:0px;margin:auto;margin-top:20px;margin-bottom:20px;;-webkit-border-radius: 5px; -moz-border-radius: 5px;border-radius: 5px;font-size:14px;" id="mail_main">
+    <h1 align="center"><a style="text-decoration:none;font-family:arial;color:#515151;" href="http://vishka.com/vixenserver?_ref=mailbox"><span style="font-size:18px;padding:1px;">VixenServer&reg;</span></a></h1>
+
+    <div style="border-top:2px solid #ccc;background:#fff;min-height:00px;padding:10px;" id="ourway_contents">
+<br/>
+
+{{if mtype=='letter' or mtype=='message' or mtype=='cmlike' or mtype=='comment':}}
+    <div style="min-height:200px;">
+        {{=XML(body)}}
+    </div>
+{{pass}}
+
+    </div>
+
+    <div style="text-align:left;border-top:1px solid #ccc;padding:10px;font-size:11px;color:lightgrey;" id="footer">
+        <a style="color:#3b5998;text-decoration:none;" target="_blank" href="http://rozanehmedia.com/">Rozaneh</a> <b>VixenServer</b>&reg; Studio Tools &reg;
+        <br/><br/>
+        Support Team: +98 <span style="color:darkgreen">938 880-1504</span>
+    </div>
+
+
+
+</div>
+</div>
+</body>
+</html>

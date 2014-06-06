@@ -1,0 +1,92 @@
+{{extend 'layout.html'}}
+{{import os}}
+{{import time}}
+{{import datetime}}
+<h6 style="background:#ccc;" align="center">File Forum</h6>
+<div style="padding:20px;border:2px solid #f2f2f2;">
+
+
+    <h4 >{{=vfile.rawname}} <a href="{{=URL(c='home', f='download', vars={'ext':vfile.ext, 'fid':vfile.uuid})}}">Download</a></h4>
+<table>
+    <tr>
+        <td>
+    <h6 style="color:#777">Uploaded by
+        {{if vfile.uploader.id == auth.user_id:}}
+            You    
+            {{else:}}
+<a href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light"
+    vars="target={{=vfile.uploader.id}}&mtype=message" title="send a message">{{=vfile.uploader.last_name.title()}}</a>
+        {{pass}}
+        {{=prettydate(vfile.datetime, T)}}
+    </h6>
+    <div style="min-height:150px;-webkit-box-shadow: 0pt 0pt 30px rgb(170, 170,170);background:#f5f5f5;padding:10px;margin-left:20px;margin-top:15px;width:450px;">
+        {{=LOAD(content='', c='utils',f='comment_core', vars={'item':vfile.uuid}, ajax=False)}}
+    </div>
+
+    <br/>
+    <hr/>
+    <h3>Related Files:</h3>
+{{item=db(db.item.uuid==request.vars.item).select().last()}}
+{{if item and item.vfiles:}}
+    {{for i in item.vfiles:}}
+        {{fdb = db(db.vfile.id==i).select(db.vfile.uuid, db.vfile.rawname, db.vfile.datetime).first()}}
+        {{if fdb and fdb.uuid!=request.vars.uuid:}}
+        <li style="padding:0px;margin:0px;"><a title="{{=fdb.datetime}}" class="sp" href="{{=URL(vars={'uuid':fdb.uuid, 'item':item.uuid})}}">{{=fdb.rawname}}</a>
+        {{pass}}
+    {{pass}}
+{{pass}}
+
+
+
+
+
+
+
+</td>
+<td>
+    <div style="font-size:10px;padding-left:10px;margin-left:20px;border-left:1px solid #ccc;min-height:450px;width:300px">
+        <li>Size: <b>{{=round(os.stat(path).st_size/1000000.0, 3)}}</b> Mb</li>
+        <li>Uploaded: <b>{{=vfile.datetime}}</b> ({{=prettydate(vfile.datetime), T}})</li>
+        <li>Created: <b>{{=time.ctime(os.stat(path).st_ctime)}}</b> ({{=prettydate(datetime.datetime.utcfromtimestamp(os.stat(path).st_ctime), T)}})</li>
+        <li>Accessed: <b>{{=time.ctime(os.stat(path).st_atime)}}</b> ({{=prettydate(datetime.datetime.utcfromtimestamp(os.stat(path).st_atime), T)}})</li>
+
+{{if vfile.ext in ['mp4', 'm4v', 'mov', 'mp3']:}}
+<div style="width:100%;margin-left:30px;margin-top:30px;-webkit-border-radius:5px;-webkit-box-shadow: 0pt 0pt 10px rgb(170, 170,170);background:#f2f2f2;padding:5px;padding-left:10px">
+  <video align="center"  id="vixen_player" class="video-js vjs-default-skin" controls="controls" loop="loop" preload="auto" width="300" height="200"
+      poster=""
+      data-setup='{"techOrder", "html5", "flash", [other supported tech]}'>
+    <source src="{{=URL(c='static', f='uploads/%s' % vfile.name)}}" type='video/mp4' />
+    <track kind="captions" src="{{=URL(c='static', f='media/captions/captions.vtt')}}" srclang="en" label="English" />
+  </video>
+</div>
+{{pass}}
+{{if vfile.ext in ['pdf', 'html']:}}
+<div style="margin-top:30px;">
+<iframe height="550" width="400" src="{{=URL(c='home', f='download', vars={'ext':vfile.ext, 'fid':vfile.uuid})}}" seamless>
+</iframe>
+</div>
+{{pass}}
+
+{{if vfile.ext == 'docx':}}
+<div style="margin-top:10px;border:1px solid #ccc;width:400px;">
+<iframe height="610" width="400" src="{{=URL(c='utils', f='readdocx', vars={'raw':'true', 'did':vfile.uuid})}}" seamless>
+</iframe>
+</div>
+{{pass}}
+
+
+<div style="margin-top:10px;border:1px solid #ccc;width:400px;">
+{{if vfile.ext in ['png', 'jpg', 'gif', 'svg']:}}
+    <img width="400" src="{{=URL(c='static', f='uploads/%s' % vfile.name)}}" /></div>
+{{elif vfile.ext in ['psd', 'tif']:}}
+
+    <img class="viewthumb" width="400" src="{{=URL(c='static', f='uploads/%s.png'% vfile.name)}}" /></div>
+{{pass}}
+
+
+
+    </div>
+</td>
+    <tr>
+</table>
+</div>

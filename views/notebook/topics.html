@@ -1,0 +1,7 @@
+<div id="ntopics">
+    <h4>TOPICS</h4>
+    {{notes=db(db.note.creator == auth.user_id).select(db.note.title, db.note.uuid)}}
+    {{for note in notes:}}
+    <li><A title="{{note.title}}" href="{{=URL(f='note', vars={'nuuid':note.uuid})}}">{{=note.title[:32]}}</a></li>
+    {{pass}}
+</div>

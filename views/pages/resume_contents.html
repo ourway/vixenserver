@@ -1,0 +1,314 @@
+{{import os}}
+{{import time}}
+{{doc_location = '%sviews/pages/resume_contents.html' % (request.folder)}}
+{{pdf_loc      = '%sstatic/ETC/Resume-FarsheedAshouri.pdf' % request.folder}}
+{{pmtime = time.ctime(os.path.getmtime(pdf_loc))}}
+{{dmtime = time.ctime(os.path.getmtime(doc_location))}}
+{{fxPHD_cert_url=URL(r=request, c='static', f='images/certImage_farsheed.ashouri_.png')}}
+<div id="farsheed_resume">
+<p style="font-size:14px;font-family:Trebuchet MS1, Trebuchet MS, sans-serif">
+<img style="float:left;margin:10px;" id="farsheed_resume_photo" width="256" height="322" src="{{=URL(r=request, c='static', f='images/farsheed_001_small.jpg')}}" alt="Farsheed Ashouri Photo"/>
+<b style="font-size:24px;color:#3B5998;" title="Farsheed(Farshid) Ashouri, Persian: فرشید عاشوری">Farsheed Ashouri</b> (Farshid Ashouri), is an Animator, VFX and CG Artist and also a Senior Software Design Engineer in Tehran, Iran. He is a <a target="_blank" title="Click and verify Farsheed with this cert No:    FUDMB3C3AKBTDRGV" href="https://www.fxphd.com/fxphd/certificate.php?certNumber=FUDMB3C3AKBTDRGV">fxPHD</a> <a title="Click to view farsheed' fxPHD certificate" onClick="window.open('{{=fxPHD_cert_url}}','fxPHD_cert_farsheed_Ashouri','width=981,height=758,location=0')"> Certified</a>. His professional domains of interest are System Architectures, Entrepreneurship, Business, Visual Effects, Computer Graphics, Animation and Product Management.
+He is currently studying Master of Business Administration in University of Tehran.
+</p>
+    <div style="margin-top:12px;line-height:16px;font-size:13px;float:left;width:20%;background:#f5f5f5;padding:10px;list-style:disc;border:1px solid #ccc;">
+    <h3 align="center">Contents</h3>
+    <ul style="list-style:disc;margin-left:15px;">
+    <li><a href="#summary"><b>Summary</b></a></li>
+    <li><a href="#technical"><b>Technical Skills</b></a></li>
+    <li><a href="#certifications"><b>Certifications</b></a></li>
+    <li><a href="#proExperience"><b>Professional Experience</b></a></li>
+    <li><a href="#education"><b>Education</b></a></li>
+    <li><a href="#EntProjects"><b>Entrepreneur Projects</b></a></li>
+    <li><a href="#achievements"><b>Achievements and Activities</b></a></li>
+    <li><a href="#demos"><b>Demos and Reels</b></a></li>
+    <li><a href="#hobbies"><b>Hobbies</b></a></li>
+    <li><a href="#contact"><b>Contact Information</b></a></li>
+    </ul>
+    </div>
+<br/>
+    <div style="display:inline-block;background:#f5f5f5;border:1px solid #eee;float:left;margin:30px;padding:10px;">
+    <a title="Right click and Save Link As ..." href="{{=URL(r=request, c='static', f='ETC/Resume-FarsheedAshouri.pdf')}}"><img style="margin-top:-40px;vertical-align:text-top" alt="pdfIco" height="64" width="64" src="{{=URL(r=request, c='static', f='images/pdf.png')}}" /></a>
+       <div style="display:inline-block"> <a title="Right click and Save Link As ..." href="{{=URL(r=request, c='static', f='ETC/Resume-FarsheedAshouri.pdf')}}"><b>Download This Résumé</b></a><br/><A style="color:grey;" title="Click to download Adobe PDF Reader" target="_blank" href="http://www.filehippo.com/download_adobe_reader/"><i>PDF Format</i></a><br/><span style="color:grey;font-size:9px;">Created on: {{=pmtime}}</span></div>
+    </div>
+</div>
+<div style="" id="farsheed_main_resume">
+    <hr/>
+    <b>Farsheed <span style="color:grey">(Farshid)</span> Ashouri - Software Design Engineer, Animator and Visual Effects Artist (Résumé)</b><i>Document version <b>1.46</b><br/><span style="color:grey;font-size:9px;">Last Edited: {{=dmtime}}</span></i><br/><br/>
+    <h1 id="contact">Farsheed Ashouri</h1>
+    <span style="font-size:14px;"><b>Animator, CG Artist and Senior Software Design Engineer (+ Entrepreneur)</b></span><br/>
+    <span>Tehran, IRAN.</span>
+    <ul>
+        <li><b>Email:</b> <a title="Farsheed Ashouri' Email Address" href="mailto:farsheed@ashouri.org">Farsheed@Ashouri.org</a></li>
+        <li><b>Mobile:</b>: +98 <b>938</b>-<b>880</b>-<b>1504</b></li>
+        <li><b>Updates:</b> <a title="You an always find updated version of this Résumé in this webpage." href="http://ourway.ir/pages/farsheed">http://ashouri.org</a></li>
+    </ul>
+
+    <h2 id="summary">Summary</h2>
+    <span>Animator, CG Artist and Senior Software Design Engineer: Bachelor of Electronics from <a target="_blank" href="http://www.iaut.ac.ir/En_Index.aspx">University of Tabriz</a>, fxPHD Academy Certified plus Art, Design, Management and Startup experience:</span>
+    <ul>
+        <li>12 years of coding experience; 2 years of Agile development industry experience in the ideation, requirements analysis, architecture, design, specification, prototyping, development, deployment of Internet solutions of massive scale and production of high quality TV Commercials.</li>
+        <li>11 Years of animating and commercial producing experience in IRAN, UAE and Turkey.</li>
+        <li>Educated in multiple leading commercial Development Models.</li>
+        <li>Recruited, built teams and led senior Visual Effects artists and Animation supervisors and managers in entrepreneurial ventures based on Tehran. production management efforts in roles reporting to CEO.</li>
+        <li>Shipped entire mission-critical Internet and Media projects with hands-on coding in all tiers of architecture or animating and directing whole commercial.</li>
+        <li>Monitored team performance and mentored engineers and artists in large client-facing team projects.</li>
+        <li>Enjoy working with smart and friendly people to own world-changing solutions to new problems in emerging commercial and tech markets.</li>
+    </ul>
+   <h2 id="technical">Technical Skills</h2>
+        <span>Concrete understanding of object oriented design concepts, managed memory, concurrency, caching, performance constraints, distributed systems, design patterns best practices and service-oriented architecture (SOA) with on-demand scalability (SaaS), 2D and 3D Animation, Image processing techniques, CG (Computer Graphics), Footage Compositing, Rendering, Dynamics Simulation, Linux networking,  Operating Systems and Web Application Designing.</span>
+        <ul>
+            <li>Professional software: Autodesk Maya, The Foundery Nuke, Pixar Renderman&reg;, Apple Shake.</li>
+            <li>Intermediate software: Houdini, After effects</li>
+            <li>Scripting: Python (Houdini, Maya, Unix Based Systems, Web Applications), MEL(Maya), Javascript, RSL(Renderman Shading Language).</li>
+            <li>OS: LINUX, MAC, WINDOWS, IRIX</li>
+            <li>Open-source stack: Google App Engine (GAE), Google Web Toolkit (GWT), MySQL, PostgreSQL, SqlLite, ORM, HTML5, CSS, JavaScript, AJAX, JSON, XML-RPC, Web2Py, Jquery, Webkit and wxPython</li>
+            <li>Database technologies: SQL, Solid understanding of relational database concepts and Domain-Driven Design</li>
+            <li>Other software: 3D Equalizer, Mentalray, Fusion, Mayaman, 3Delight, Realflow, Boujo, Matchmover, GIMP.</li>
+            <li>Technical IT:  Linux/Windows/BSD based file servers, Samba and NFS Networking, networking equipments, Version Control Systems like Git and Graphic User Interface (GUI) Programming.</li>
+            <li>Favorite tools: Ipython and VIM on Ubuntu Linux, and Git SCM, Practice and evangelize code quality and style standards when appropriate. Experienced with establishing source control, branching policies, automated builds and continuous integration across Agile teams in open-source environments, MAYA and Houdini And Nuke on Ubuntu x86-64 Linux, Mayaman and 3Delight.</li>
+        </ul>
+    <h2 id="certifications">Certifications</h2>
+        <span></span>
+        <ul>
+        <li>Expert <a target="_blank" href="http://experts4solutions.com/e4s/default/expert/75" title="Click to visit his profile"><B>member</B></a> of <a target="_blank" href="http://experts4solutions.com/e4s/default/experts"><b>Experts4Solutions</b></a> international organization. </li>
+            <li>Professional Member of Association for Computing Machinery (ACM).</li>
+            <li>Professional Member of ASIFA.</li>
+            <li>fxPHD Certified on 2D/3D Stereoscopic.</li>
+        </ul> 
+      <h2 id="proExperience">Professional Experience</h2>
+
+        <h3>Vishka Studio</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Animation Studio</span> <i>December 2011 - Present</i>
+        <ul>
+            <li>Technical Director</li>
+        </ul>
+        <br/>
+
+        <h3>Ourway Co.</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Startup</span> <i>May 2011 - Present</i>
+        <ul>
+            <li>Co-Founder and CEO</li>
+        </ul>
+        <br/>
+
+
+        <h3>Novin Film</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Animation Studio</span> <i>March 2011 - May 2011</i>
+        <ul>
+            <li>VFX Supervisor</li>
+        </ul>
+        <br/>
+
+        <h3>Mabna Studio</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Animation and VFX Studio</span> <i>September 2010 - February 2011</i>
+        <ul>
+            <li>CEO, VFX and Stereoscopy Supervisor</li>
+        </ul>
+        <br/>
+
+        <h3>Arang</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Commercials Studio</span> <i>March 2010 - September 2010</i>
+        <ul>
+            <li>Production Manager and Pipeline Programmer</li>
+        </ul>
+        <br/>
+
+
+        <h3>Raeika Pictures</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Animation Studio</span> <i>December 2009 - March 2010</i>
+        <ul>
+            <li>CEO, Executive Producer and Supervisor</li>
+        </ul>
+        <br/>
+
+        <h3>Pouyandegan Advertising Agency</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>TV Commercials Producer</span> <i>November 2007 - December 2009</i>
+        <ul>
+            <li>Executive Producer and Supervisor</li>
+        </ul>
+        <br/>
+
+        <h3>Clockworks Studio</h3>
+        <h4>Dubai, UAE</h4><br/>
+        <span>TV Commercials Studio</span> <i>September 2007 - November 2007</i>
+        <ul>
+            <li>VFX Artist And Python programmer</li>
+        </ul>
+        <br/>
+
+        <h3>TDT Pictures</h3>
+        <h4>Bandar -e- Abbas, IRAN</h4><br/>
+        <span>Animation Studio</span> <i>June 2007 - August 2007</i>
+        <ul>
+            <li>Lead supervisor and Pipeline designer</li>
+        </ul>
+        <br/>
+
+        <h3>Saina Film</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Film and Animation Studio</span> <i>August 2004 - January 2006</i>
+        <ul>
+            <li>Animator and VFX artist</li>
+        </ul>
+        <br/>
+
+        <h3>Tolu -e- Talayie</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Commercials Studio</span> <i>August 2005 - December 2005</i>
+        <ul>
+            <li>Animator and VFX artist</li>
+        </ul>
+        <br/>
+
+
+
+
+        <h3>Green Network</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Tv commercials Studios</span> <i>August 2003 - August 2004</i>
+        <ul>
+            <li>Supervisor, Animator and VFX artist</li>
+        </ul>
+        <br/>
+
+        <h3>Ayin -e- Honar</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Tv commercials Agency</span> <i>January 2003 - August 2003</i>
+        <ul>
+            <li>Supervisor, Animator and Vfx artist</li>
+        </ul>
+        <br/>
+
+        <h3>Namava</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Tv commercials Studio</span> <i>September 2002 - January 2003</i>
+        <ul>
+            <li>Animator and VFX Artist</li>
+        </ul>
+        <br/>
+
+        <h3>Green Leaf Co.</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Game Production</span> <i>July 2002 - September 2002</i>
+        <ul>
+            <li>Animator</li>
+        </ul>
+        <br/>
+
+
+        <h2 id="education">Education</h2>
+        <h3>University of Tabriz</h3>
+        <h4>Tabriz, IRAN</h4><br/>
+        <span>Electronics Engineering</span> <i>September 1998 - January 2002</i>
+        <br/>
+        <br/>
+
+        <h3>University of Tehran</h3>
+        <h4>Tehran, IRAN</h4><br/>
+        <span>Master of Business Administration (MBA)</span> <i>September 2011 -  ANTICIPATED September 2012</i>
+        <br/>
+
+
+
+        <h2 id="EntProjects">Entrepreneurial Projects</h2>
+        <ul>
+            <li><a target="_blank" href="http://tiny.cc/renivo" ><b>Renivo</b></a> - A web based asset management system</li>
+            <li><a target="_blank" href="http://ourway.ir/pages/about"><b>Ourway</b></a>&reg; social network: Inspired by Facebook&reg; and is actively under development.</li>
+            <li><a target="_blank" href="http://tiny.cc/Mapy"><b>Mapy</b></a> - Advanced External Command Sender technology</li>
+            <li><a target="_blank" href="http://tiny.cc/iquence"><b>iQuence</b></a>&reg; - Footage realtime Player</li>
+        </ul>
+        <h2 id="achievements">Achievements and Activities</h2>
+            <span></span>
+        <ul>
+            <br/>
+            <li>Web2py <a target="_blank" href="http://www.web2py.com/examples/default/who">contributor</a> and developer, InfoWorld's <a target="_blank" href="http://www.infoworld.com/slideshow/24605/infoworlds-2012-technology-the-year-award-winners-183313?utm_source=Python+Weekly+Newsletter&utm_campaign=337820f7f5-Python_Weekly_Issue_17_January_12_2012&utm_medium=email#slide23">2012 Technology of the Year</a> Award Winner.</li>
+            <li style="min-height:26px;padding-top:5px;padding-left:250px;background:url({{=URL(r=request, c='static', f='images/e4s_button_l.png')}}) no-repeat"> First and the only Iranian expert <a target="_blank" href="http://experts4solutions.com/e4s/default/expert/75" title="Click to visit his profile">member</a> of <a target="_blank" href="http://experts4solutions.com/e4s/default/experts"><b>Experts4Solutions</b></a> international organization. </li>
+            <li>Python Programming classes for MSc Students, Khajeh Nasir Toosi University of Technology (KNTU), Tehran, Iran - [September 2011-Present] - lecturer</li>
+            <li>3D Animation workshop, ASIFA Iran and Tehran Contemporary art museum, Tehran, Iran - Oct 2007 - lecturer</li>
+            <li>Third Digital Visual Effects Seminar, IRIB University, Tehran, Iran - June 2006 - Lecturer</li>
+            <li>Owner and Manager of <a target="_blank" href="https://groups.google.com/forum/#!forum/python_inside_maya"><q>Python Inside Maya</q></a> Python API programming group (More than 2500 active members).</li>
+            <li>Co-Founder and CEO of Ourway&reg; Social Network.</li>
+            <li>Co-Founder and Professional member of Tabriz Animation Center.</li>
+        </ul>
+        <h2  id="demos">Demos and Reels</h2>
+        <div style="padding:5px;background:#f8f8f8;border-left:1px solid #eee;padding-left:10px;margin-left:10px;">
+            <h3>Commericals:</h3>
+        <ul>
+            <h4>Raeika Pictures</h4><br/>
+            <i>Executive Producer, Supervising Technical Director</i>
+            <li>Sedr-e-Sehhat Inc. Animation Commercial . <a title="Please right-click and select *Save Link As ...*" 
+                href="{{=URL(r=request, c='static', f='videos/7bb50fc7f7a3aa31bfeb0ec420246930.mp4')}}">Download</a> </li>
+            <li>Lina Company Animation Commercial No.1 . <a title="Please right-click and select *Save Link As ...*" 
+                href="{{=URL(r=request, c='static', f='videos/c5d28ed4d8ca5567f1dc1750f2d335de.mp4')}}">Download</a> </li>
+            <li>Lina Company Animation Commercial No.1 [Animatic] . <a title="Please right-click and select *Save Link As ...*" 
+                href="{{=URL(r=request, c='static', f='videos/c9d1997d542d1daceccac29c6142e7d8.mp4')}}">Download</a> </li>
+            <li>Lina Company Animation Commercial No.2 . <a title="Please right-click and select *Save Link As ...*" 
+                href="{{=URL(r=request, c='static', f='videos/75acf1ff6af71a67c63e1f8877348881.mp4')}}">Download</a> </li>
+        </ul>
+        <ul>
+            <h4>Novin Film</h4><br/>
+            <i>Supervising Technical Director, Animator</i>
+            <li>Arj Inc. TV Commercial . <a title="Please right-click and select *Save Link As ...*" 
+                href="{{=URL(r=request, c='static', f='videos/e01e4de97e6d48acdd7b1206dce66082.mp4')}}">Download</a> </li>
+        </ul>
+        <br/>
+        <h3 id="WebApplications">Web Applications:</h3>
+            <h4><a target="_blank" href="http://ourway.ir">Ourway&reg;</a> Co.</h4><br/>
+            <i>CEO and Programmer</i>
+            <ol>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='pages', f='blog')}}"><b>blogs</b></a> - Blogging Tool</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='g5', f='index')}}"><b>G5</b></a> - Online memorizing Utility</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='screen_writing', f='index')}}"> <b>Idea</b></a>- Random Idea generating tool for screen writers and directors</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='gallery', f='index')}}"><b>Gallery</b></a> - Online Photo Sharing</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='pastebin', f='index')}}"><b>Pastebin</b></a> - Paste bin for developers</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='g5', f='dictionary')}}"><b>Dictionary</b></a> - English/Persian Dictionary</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='pages', f='text2speech')}}"><b>Text2Speech</b></a> - Text2Speech Technology with natural voices [Supports 5 languages]</li>
+                <li>Ourway&reg; <a target="_blank" href="{{=URL(r=request, c='pages', f='blog', vars={'u':'rodmena', '_ref':'resume'})}}"><b>Finglish</b></a> - Persian [Farsi] transliteration tool (Included in blogging system)</li>
+            </ol>
+        <br/>
+        <h3 id="MayaScripting">Maya MEL and Python Scripts</h3>
+            <h4>CG Industry</h4><br/>
+            <i>Freelance Programmer</i>
+        <ol>
+            <li><a target="_blank" href="http://www.creativecrash.com/maya/downloads/scripts-plugins/rendering/renderman/c/lights-studio-pro"><b>Lights Studio Pro</b></a> Pixar Renderman and Animal Logic&reg; Shadow lights and Paint lights for Maya&trade;</li>
+            <li><a target="_blank" href="http://www.creativecrash.com/maya/downloads/scripts-plugins/animation/c/zeno"><b>Zeno</b></a> Character Animation Key-frammer</li>
+            <li><a target="_blank" href="http://www.creativecrash.com/downloads/applications/syntax-scripting/c/mapy"><b>Mapy</b></a> New Python and MEL Script Editing System For Maya</li>
+            <li><a target="_blank" href="http://www.creativecrash.com/downloads/applications/automator/c/iquence"><b>iQuence</b></a> A powerful Sequence manager and player based on Apple&reg; Shake&trade; engine</li>
+
+
+        </ol>
+
+
+
+        </div>
+        <br/>
+        <h2 id="hobbies">Hobbies amd wishes</h2>
+            <span></span>
+        <ul>
+            <li>I wish to travel around the world - Specially USA, Italy and Turkey.</li>
+            <li>Developing websites in spare time.</li>
+            <li>Solving <a target="_blank" href="http://projecteuler.net/problems">math problems</a>! <div style="margin:5px;width:200px;height:60px;background:url(http://projecteuler.net/profile/ashouri.png)"></div></li>
+            <li>Character Animation - Animating short stories.</li>
+            <li>Development of side projects on top of Open Source APIs such as Google AJAX libraries, OpenSocial, Facebook Connect, Protocol Buffers and OpenID.</li>
+            <li>Writing Autodesk&reg; Maya&reg; Plug-ins with C++ or Python API.</li>
+            <li>Installing and testing new UNIX based Operating Systems.</li>
+            <li>Reading breaking news and international events - Mostly New York Times.</li>
+            <li>Music - Love to sing and play piano.</li>
+        </ul>
+
+
+<!-- ======================= End of Resume ========================== -->
+
+<br/>
+<hr/>
+<p align="center"><span style="color:lightgrey;">Unique Page Visits: </span>{{=nv}}</p>
+</div>
+

@@ -1,0 +1,44 @@
+{{extend 'notebook/index.html'}}
+<table>
+    <tr><td>
+        <div class="nttitlearea">
+            <span style="color:grey;"><small>{{=prettydate(date)}}</small></span>
+            <h4>{{=title}}</h4>
+            <br/>
+        </div>
+    <div class="note_body" id="note_body_{{=nuuid}}">
+    {{=MARKMIN(body)}}
+</div>
+    </td>
+    <td class="note_bar" id="note_bar_{{=nuuid}}">
+        <li><a class="ntlarge" id="ntlarge_{{=nuuid}}">A</a> <a class="ntsmall" id="ntsmall_{{=nuuid}}">A</a></li>
+        <li id="nedit_{{=nuuid}}"><a>Edit</a></li>
+        <li id="nereply_{{=nuuid}}"><a>Reply</a></li>
+        <li id="nedelete_{{=nuuid}}"><a>Delete</a></li>
+    </td>
+</tr>
+    <tr><td>
+    {{=tags}}
+</td><td></td></tr>
+</table>
+<script type="text/javascript">
+    $(document).ready(function(){
+            var strText = $('#note_body_{{=nuuid}}').html();
+            //var intIndexOfMatch = strText.indexOf( "@" );
+            var taglink = "{{=URL(c='notebook', f='tags')}}";
+            newbody = strText.replace( new RegExp("@[a-zA-Z_]+"), '<a href="' +taglink+ '?tag=$&">$&</a>');
+            $('#note_body_{{=nuuid}}').html(newbody);
+
+        $('#ntlarge_{{=nuuid}}').bind('click', function(){
+            var latestFS = $('#note_body_{{=nuuid}}').css('font-size');
+            var newSize = parseInt(latestFS.replace(/px/, "")) + 2;
+            $('#note_body_{{=nuuid}}').css('font-size', newSize + 'px');
+            });
+
+        $('#ntsmall_{{=nuuid}}').bind('click', function(){
+            var latestFS = $('#note_body_{{=nuuid}}').css('font-size');
+            var newSize = parseInt(latestFS.replace(/px/, "")) - 2;
+            $('#note_body_{{=nuuid}}').css('font-size', newSize + 'px');
+            });
+    });
+</script>

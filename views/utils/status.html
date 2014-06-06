@@ -1,0 +1,28 @@
+{{extend 'layout.html'}}
+<div style="padding:10px;background:#f8f8f8;">
+{{for i in ['python', 'ffmpeg', 'mencoder']:}}
+<div style="padding:10px;">
+    <h5>{{=i.title()}}</h5>
+    <pre style="background:#f2f2f2;padding:5px;" id='{{=i}}'>
+    </pre>
+</div>
+{{pass}}
+
+
+</div>
+<script type="text/javascript">
+    function python() { //must be outside of ready
+        ajax('{{=URL(c="utils", f="pMonitor", vars={"appname":"python"})}}',[''],'python');
+    };
+    function ffmpeg() { //must be outside of ready
+        ajax('{{=URL(c="utils", f="pMonitor", vars={"appname":"ffmpeg"})}}',[''],'ffmpeg');
+    };
+    function mencoder() { //must be outside of ready
+        ajax('{{=URL(c="utils", f="pMonitor", vars={"appname":"mencoder"})}}',[''],'mencoder');
+    };
+    $(document).ready(function(){
+        setInterval("python()",1000);
+        setInterval("ffmpeg()",1000);
+        setInterval("mencoder()",1000);
+    });
+</script>

@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+
+<div id="notebook" >
+    <div>
+        <h3 align="center"></h3>
+        <br/>
+    </div>
+    <table>
+        <tr>
+            <td class="ntoolbar">
+                {{=LOAD(content='', c='notebook',f='toolbar', vars={}, ajax=True)}}
+            </td>
+            <td id="ntcontainer" class="npreview">
+                {{include}}
+            </td>
+            <td class="ntopics">
+                {{=LOAD(content='', c='notebook',f='topics', vars={}, ajax=True)}}
+            </td>
+        </tr>
+
+    </table>
+
+</div>
+
+
+<script type="text/javascript">
+ $(document).ready(function(){
+
+
+ });
+
+</script>

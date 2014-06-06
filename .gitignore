@@ -52,3 +52,11 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
+
+# web2py
+
+errors/
+sessions/
+databases/
+private/
+

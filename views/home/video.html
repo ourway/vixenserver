@@ -1,0 +1,113 @@
+{{extend 'layout.html'}}
+{{vdb = db(db.vfile.name==request.vars.vname).select().last()}}
+<div style="-webkit-border-radius:5px;-webkit-box-shadow: 0pt 0pt 10px rgb(170, 170,170);padding:65px;padding-top:10px;padding-bottom:10px;background:#f2f2f2;">
+  <video align="center"  id="vixen_player" class="video-js vjs-default-skin" controls="controls" loop="loop" autoplay=autoplay preload="auto" width="852" height="480"
+      poster=""
+      data-setup='{"techOrder", "html5", "flash", [other supported tech]}'>
+    <source src="{{=URL(c='static', f='uploads/%s' % vname)}}" type='video/mp4' />
+    <track kind="captions" src="{{=URL(c='static', f='media/captions/captions.vtt')}}" srclang="en" label="English" />
+  </video>
+</div>
+
+<div style="background:#f8f8f8;width:400px;float:right;margin:10px;padding:10px">
+    <div>
+        Duration: <span id="duration"></span><br/>
+        Time: <span id="cutime"></span> <span id="commentAtTime"><a id="commentAtTime">Comment</a></span><br/>
+        <span id="buff_area">Buffered: <span id="buffered"></span><br/></span>
+        <br/>
+        This priview belongs to:
+        <ul>
+            {{for shot in shots:}}
+            <li><a href="{{=URL(f='shotview', vars={'shid':shot.uuid})}}">Shot<b>{{=shot.number}}</b></a>/<a href="{{=URL(f='sqview', vars={'sid':shot.sequence.uuid})}}">Sequence<b>{{=shot.sequence.number}}</b></a>
+            of <a href="{{=URL(f='prview', vars={'pid':shot.sequence.project.uuid})}}">{{=shot.sequence.project.name.capitalize()}}</a> project</li>
+            {{pass}}
+            {{for seq in seqs:}}
+            <li><a href="{{=URL(f='sqview', vars={'sid':seq.uuid})}}">Sequence<b>{{=seq.number}}</b></a>
+            of <a href="{{=URL(f='prview', vars={'pid':seq.project.uuid})}}">{{=seq.project.name.capitalize()}}</a> project</li>
+            {{pass}}
+            {{for project in projects:}}
+            <li><a href="{{=URL(f='prview', vars={'pid':project.uuid})}}">{{=project.name.capitalize()}}</a> project</li>
+            {{pass}}
+
+        </ul>
+{{if vdb:}}
+<li><a href="{{=URL(f='download', vars={'ext':'mp4', 'fid':fdb.uuid})}}"><b>D</b>ownload this video file</a></li>
+{{pass}}
+</div>
+
+
+
+
+</div>
+
+{{if vdb:}}
+    <div style="background:#f5f5f5;padding:10px;margin-left:20px;margin-top:15px;width:450px;">
+        {{=LOAD(content='', c='utils',f='comment_core', vars={'item':vdb.uuid}, ajax=True)}}
+    </div>
+{{pass}}
+
+
+
+{{if target:}}
+    {{previews = target[-1].previews or []}}
+    <div style="margin:10px;background:#f2f2f2;padding:10px;">
+    <h3 align="center">Preview History</h3>
+<table>
+        {{for i in previews[-10:]:}}
+            <tr>
+            <td>
+        &bull; <a style="padding-right:3px;padding:right:3px;" href="{{=URL(f='video', vars={'vname':i.name})}}">reversion {{=previews.index(i) + 1}}</a>
+        </td>
+        <td> <small style="color:grey">{{=prettydate(i.datetime)}}</small></td>
+        </tr>
+        {{pass}}
+</table>
+{{pass}}
+<br/>
+* <small>Last 10 previews are available.</small>
+</div>
+
+
+
+<script type="text/javascript">
+
+    $('#commentAtTime').click(function(){
+        var myPlayer = _V_("vixen_player");
+        var whereYouAt = Math.round(myPlayer.currentTime()*100)/100;
+        //alert(whereYouAt);
+        $('.cmt').text('['+whereYouAt+']:');
+        $('.cmt').focus();
+    });;
+
+    var showComment = function(){
+        var myPlayer = this;
+        $('#commentAtTime').fadeIn();
+    };
+    var hideComment = function(){
+        var myPlayer = this;
+        $('#commentAtTime').fadeOut();
+    };
+    function details(){
+        var myPlayer = _V_("vixen_player");
+        var howLongIsThis = myPlayer.duration();
+        var whereYouAt = Math.round(myPlayer.currentTime()*100)/100;
+        var howMuchIsDownloaded = Math.round(myPlayer.bufferedPercent() * 100);
+        $('#duration').html('<b>' + howLongIsThis + '</b>' + ' ' + 'Seconds');
+        $('#cutime').html(whereYouAt);
+        if (howMuchIsDownloaded != 100){
+            $('#buffered').html('<b style="color:darkgreen">' + howMuchIsDownloaded + '</b>' + '%');
+        }
+        else{
+            $('#buff_area').css('color', 'lightgrey');
+            $('#buffered').html('<b>' + 'Finished' + '</b>');
+        }
+        } ;
+
+    _V_("vixen_player").ready(function(){
+        var myPlayer = this;
+        setInterval('details()', 100);
+        myPlayer.addEvent("pause", showComment);
+        myPlayer.addEvent("play", hideComment);
+    });
+
+</script>

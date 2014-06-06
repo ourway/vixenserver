@@ -1,0 +1,34 @@
+<script type="text/javascript"><!--
+    // These variables are used by the web2py_ajax_init function in web2py_ajax.js (which is loaded below).
+    var w2p_ajax_confirm_message = "{{=T('Are you sure you want to delete this object?')}}";
+    var w2p_ajax_date_format = "{{=T('%Y-%m-%d')}}";
+    var w2p_ajax_datetime_format = "{{=T('%Y-%m-%d %H:%M:%S')}}";
+    //--></script>
+{{
+response.files.insert(0,URL('static','js/libs/jquery-1.6.2.min.js'))
+response.files.insert(1,URL('static','css/calendar.css'))
+response.files.insert(1,URL('static','css/wijmo/jquery-wijmo.css'))
+response.files.insert(3,URL('static','css/wijmo/jquery.wijmo-open.2.1.4.css'))
+response.files.insert(4,URL('static','js/calendar.js'))
+response.files.insert(5,URL('static','js/web2py.js'))
+response.files.insert(6,URL('static','js/autoresize.jquery.min.js'))
+response.files.insert(7,URL('static','js/html4-defs.js'))
+response.files.insert(8,URL('static','js/h5utils.js'))
+response.files.insert(8,URL('static','js/prettify.packed.js'))
+response.files.insert(9,URL('static','js/sanitize.js'))
+response.files.insert(10,URL('static','js/jquery.lightbox_me.js'))
+response.files.insert(10,URL('static','js/jquery.scrollUp.min.js'))
+response.files.insert(11,URL('static','js/jquery.tools.min.js'))
+response.files.insert(12,URL('static','js/jquery.titlealert.min.js'))
+response.files.insert(13,URL('static','js/jquery-ui-1.8.18.custom.min.js'))
+response.files.insert(14,URL('static','js/wijmo/jquery.wijmo-open.all.2.1.4.min.js'))
+response.files.insert(15,URL('static','js/wijmo/jquery.wijmo-complete.all.2.0.9.min.js'))
+response.files.insert(16,URL('static','js/script.js'))
+response.files.insert(18,URL('static','js/ckeditor/ckeditor.js'))
+response.files.insert(19,URL('static','redactor/redactor.min.js'))
+
+
+
+response.include_meta()
+response.include_files()
+}}

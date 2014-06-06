@@ -1,0 +1,132 @@
+{{extend 'layout.html'}}
+
+<div {{if is_master:}}style="float:right;margin-right:30px;"{{pass}}><img alt="Projects Logo" width="256" height="256" src="{{=URL(c='static', f='images/pr_logo.png')}}" />
+
+<div style="border-left:1px solid #eee;min-height:150px; padding-left:10px;">
+<h5 style="background:#eee;padding:5px;">Projects List</h5>
+    <ol>
+        {{for i in prs:}}
+        {{if auth.has_membership('pr-%s'%i.uuid, auth.user_id) or auth.has_membership('master', auth.user_id):}}
+        <li><a style="text-decoration:none;font-weight:bold;" href="{{=URL(f='prview?pid=%s'%i.uuid)}}">
+        {{=i.name.title()}}</a></li>
+    {{pass}}
+    {{pass}}
+    </ol>
+</div>
+</div>
+
+{{if auth.has_membership('managers', auth.user_id) or auth.has_membership('master', auth.user_id):}}
+<div id="projectpage">
+<h4><span style="font-weight:800;padding:2px;background:darkred;color:#fff">P</span>rojects</h4>
+<h5>Create / Edit Your Projects</h5>
+<h6>Before creating new project, you have to read these instructions:</h6>
+
+<ul>
+<li>The project name and project path must be unique</li>
+<li>You are not allowed to change project name later! So choose it carefully.</li>
+<li>After creating your project, you can add more information like project deadlines and descriptions.</li>
+</ul>
+<div class="table">
+
+<form method="post" action="?create=true">
+<table>
+<tr>
+<td> <span style="color:darkred">*</span> Project Name: </td>
+<td><input type="text" name="name" placeholder="Your Project Name" title="Please write a unique project name here"/></td>
+</tr>
+<tr><td><span style="color:darkred">*</span> Project Supervisor: </td>
+<td>
+<select name="prsup">
+
+{{users = db(db.auth_user.id).select()}}
+{{for person in users:}}
+    <option>{{=person.first_name.title()}} {{=person.last_name.title()}} [ {{=person.id}} ]</option>
+{{pass}}
+
+<option  selected="selected"></option>
+</select>
+</td></tr>
+<tr><td><span style="color:darkred">*</span> Director: </td>
+<td>
+<select name="prdir">
+
+{{users = db(db.auth_user.id).select()}}
+{{for person in users:}}
+    <option>{{=person.first_name.title()}} {{=person.last_name.title()}} [ {{=person.id}} ]</option>
+{{pass}}
+
+<option  selected="selected"></option>
+</select>
+</td></tr>
+
+<tr><td><span style="color:darkred">*</span> Technical Director: </td>
+<td>
+<select name="prtd">
+
+{{users = db(db.auth_user.id).select()}}
+{{for person in users:}}
+    <option>{{=person.first_name.title()}} {{=person.last_name.title()}} [ {{=person.id}} ]</option>
+{{pass}}
+
+
+
+<option  selected="selected"></option>
+</select>
+</td></tr>
+
+<tr><td><span style="color:darkred">*</span> Producer: </td>
+<td>
+<select name="prprod">
+
+{{users = db(db.auth_user.id).select()}}
+{{for person in users:}}
+    <option>{{=person.first_name.title()}} {{=person.last_name.title()}} [ {{=person.id}} ]</option>
+{{pass}}
+
+<option  selected="selected"></option>
+</select>
+</td></tr>
+
+<tr><td><span style="color:darkred">*</span> Format: </td>
+<td>
+<select name="format">
+<option selected="selected"><b>Full HD</b> (1920x1080)</option>
+<option><b>HDV</b> (1280x720)</option>
+<option><b>PAL</b> (720x576)</option>
+<option><b>NTSC</b> (720x486)</option>
+<option><b>2k Super35</b> (2048x1556)</option>
+</select>
+</td></tr>
+
+<tr><td><span style="color:darkred">*</span> Output FPS: </td>
+<td>
+<select name="fps">
+<option selected="selected"><b>PAL</b> (25)</option>
+<option><b>NTSC</b> (29.97)</option>
+<option><b>FILM</b> (24)</option>
+</select>
+</td></tr>
+
+<tr><td><span style="color:darkred">*</span> Input FPS: </td>
+<td>
+<select name="mayafps">
+<option selected="selected"><b>PAL</b> (25)</option>
+<option><b>NTSC</b> (29.97)</option>
+<option><b>FILM</b> (24)</option>
+<option><b>HALF</b> (12)</option>
+<option><b>Game</b> (15)</option>
+<option><b>Slow1</b> (6)</option>
+<option><b>Slow2</b> (2)</option>
+</select>
+</td></tr>
+
+<tr><td></td><td><input type="submit" value="Create" /></td></tr>
+</table>
+</form>
+{{for i in message:}}
+    <li style="color:red">{{=i}}</li>
+{{pass}}
+</div>
+</div>
+
+{{pass}}

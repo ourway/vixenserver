@@ -1,0 +1,19 @@
+{{extend 'light_overlay.html'}}
+<div>
+<p >
+<b style="cursor:default">Gallery Name:</b><br/><br/>
+<input class="textInput" id="new_gal_name" name="new_gal_name" placeholder="Enter Gallery Name">
+</p>
+    <p align=center>
+    <input rel="confirmation" type="submit" value="Create" class="uiButton uiButtonLarge" id="confirm_request_butt">
+    </p>
+</form>
+</div>
+<script type="text/javascript">
+ $(document).ready(function(){
+    $('#confirm_request_butt').click(function(){
+         ajax('create_new_gallery_ajax',['new_gal_name'],'');
+         //parent.$.lightbox_me.close();
+    });
+});
+</script>

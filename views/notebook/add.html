@@ -1,0 +1,16 @@
+<div id="ntadd">
+<input id="nttitle" name="title" type="text" placeholder="Note Title" length="128"/>
+<div id="ntaddtextarea">
+<textarea id="ntbodyinput" name="body" placeholder="Write down here"></textarea>
+</div>
+<button id="ntaddbut">Add</button>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+    $('#ntaddbut').bind('click', function(){
+        ajax('{{=URL(f="ajax_do_add")}}', ['title','body'], 'ntcontainer');
+    });
+});
+</script>

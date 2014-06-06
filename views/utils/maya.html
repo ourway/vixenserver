@@ -1,0 +1,47 @@
+{{extend 'layout.html'}}
+
+{{if message:}}
+
+<textarea name="command" id="command"></textarea>
+<button id="sendCbut">Send</button>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+ $(document).ready(function(){
+
+ 	$('#sendCbut').click(function(){
+ 		ajax('{{=URL(c="utils", f="maya_run_command")}}', ['command'], 'messages');
+ 	});
+ });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{else:}}
+
+<h5>I can not connect to your Maya and Vixen! :(</h5>
+
+{{pass}}

@@ -1,0 +1,68 @@
+{{import html2text as ht}}
+{{import math}}
+{{page = request.vars.page}}
+{{if page and page!='None':}}
+        {{page=int(page)}}
+{{else:}}
+        {{page=1}}
+{{pass}}
+{{st=(page-1)*12}}
+{{ed=(page)*12}}
+{{pnum=int(math.ceil(len(messages)/12.0))}}
+<div style="float:right">
+    {{if pnum:}}
+        <small style="color:lightgrey">Page {{=page}} of {{=pnum}} &bull;</small>
+    {{pass}}
+    {{if page>1:}}
+        <a href="?page={{=page-1}}"><b>P</b>revious</a>
+        &bull;
+    {{pass}}
+    {{if pnum>page:}}
+        <a href="?page={{=page+1}}"><b>N</b>ext</a>
+    {{pass}}
+
+</div>
+<div id="ajax_inbox">
+{{filter=request.vars.filter}}
+<!--
+<b>{{if filter != 'unread':}}{{=mode.capitalize()}}{{else:}}Unread{{pass}} Messages</b>
+-->
+ <div style="display:inline;"><a href="#" id="mar"><small>Make All As Read</small></a></div>
+<ul>
+{{mset=[]}}
+{{for i in messages:}}
+    {{if filter != 'unread':}}
+        {{mset.append(i)}}
+    {{else:}}
+        {{if i.unread:}}
+            {{mset.append(i)}}
+        {{pass}}
+    {{pass}}
+{{pass}}
+
+{{for i in mset[st:ed]:}}
+    {{#=i.uuid}}
+    <li  onclick="gotolink('?mid={{=i.uuid}}')" {{if i.unread:}} class="unread" {{else:}} class="read" {{pass}} >
+    {{if i.sender and (mode=='inbox' or mode=='search'):}}
+    <small><i>{{=i.sender.first_name.title()}} {{=i.sender.last_name.title()}}</small></i>:
+    {{elif i.target and mode=='sent':}}
+    <small><i>{{=i.target.first_name.title()}} {{=i.target.last_name.title()}}</small></i>:
+    {{else:}}
+    <a>VixenServer&reg;</a>:
+    {{pass}}
+    <b >
+    <span {{if i.unread:}} class="unread" {{else:}} class="read" {{pass}} href="#">
+    {{if i.subject:}}{{=i.subject[:84]}}{{else:}}{{=i.body[:84]}}{{pass}}</span>
+    </b>
+    <small style="float:right;color:#aaa;">{{=prettydate(i.creation_date, T)}}</small>
+    {{item=db(db.item.pid==i.uuid).select().last()}}
+    {{if item and item.vfiles:}}
+        <img style="float:right;margin-right:10px;" src="{{=URL(c='static', f='images/attachment_small.png')}}" height="19" width="16" />
+    {{pass}}
+    </li>
+{{pass}}
+</ul>
+</div>
+
+
+

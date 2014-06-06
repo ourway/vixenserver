@@ -1,0 +1,16 @@
+{{extend 'light_overlay.html'}}
+<p align=center>
+    <b>Are you sure you want to <span style="color:#cc0000;">delete</span> this gallery?</b>
+    <p align=center>
+    <button class="uiButton uiButtonLarge" rel="confirmation" id="confirm_request_butt" title="Deleting a gallery means you'll not able to access the gallery and it's photos anymore." >Delete</button>
+ </p>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#confirm_request_butt').click(function(){
+             ajax('../delete_gallery_ajax?gid={{=gid}}',[''],'');
+        });
+    });
+</script>
+
+

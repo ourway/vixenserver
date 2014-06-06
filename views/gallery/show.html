@@ -1,0 +1,8 @@
+{{extend 'layout.html'}}
+{{file = None}}
+<div id=home_contents>
+<table><tr><td><div id=gallery_center_div>{{include 'gallery/show_center_contents.html'}}</div></td>
+<td style="vertical-align:top"><div id=gallery_right_div>{{include 'gallery/show_right_sidebar.html'}}</div></td>
+</tr></table>
+</div>
+{{pass}}

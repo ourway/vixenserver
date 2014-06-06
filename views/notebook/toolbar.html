@@ -1,0 +1,23 @@
+<div id="ntoolbar">
+    <input type="Search" placeholder="Search this notebook"/>
+    <ul>
+        {{for i in ['main', 'add', 'share', 'backup', 'import', 'export']:}}
+        <li><a id="{{='nt_%s' % i}}" href="#">{{=i.title()}}</a></li>
+    
+        {{pass}}
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+
+    $('#nt_add').bind('click', function(){
+        ajax('{{=URL(f="ajax_add")}}', [], 'ntcontainer');
+        });
+    $('#nt_main').bind('click', function(){
+        var mainpage = "{{=URL(f='index')}}";
+        window.location = mainpage;
+    });
+
+});
+</script>

@@ -1,0 +1,173 @@
+{{from datetime import datetime as dt}}
+{{_next=request.env.http_referer}}
+<div id=whole_target_{{=item.pid}}> <div class=comment_main> <div id="jsfeedback_{{=item.pid}}"></div> <div> </div>
+<div  id=cm_like_bar_{{=item.pid}}>
+<i class="cc_ptmsp"></i><span title="{{=dt.ctime(item.creation_date)}}" style="color:#919191;margin-right:1px;">{{=prettydate(item.creation_date, T)}}</span>
+ . 
+
+    <div  style="display:inline;" class="cm_like_area" id=cm_like_area_{{=item.pid}}>
+
+        <img id="cm_comment_icon_{{=item.pid}}" style="{{if not old_comments:}}display:none;{{pass}}" class=img width="16" height="16" src="{{=URL(r=request, c='static', f='images/v8yrm0ekzpi.gif')}}"/>
+        <span class="cm_numofolds_{{=item.pid}}" style="color:#6D84B4;margin-right:5px;margin-left:-2px;">
+        {{if old_comments:}}{{=len(old_comments)}}{{pass}}
+        </span>
+
+        <a style="{{if not likes:}}display:none;{{pass}}" id="likenumiconshow_{{=item.pid}}" class="like_series"></a>
+        <span id="cm_numoflikes_{{=item.pid}}" title="" style="color:#6d84b4;margin-right:5px;margin-left:-2px;">
+        
+        {{if likes:}}{{=len(likes)}}{{pass}}      
+        </span>
+    </div>
+
+<a style="cursor:pointer;" class="plikebut_{{=item.pid}}"  id="{{=item.pid}}">{{if auth.user_id in likes:}}Unlike{{else:}}Like{{pass}}</a>
+.
+<a style="cursor:pointer;" class="comment_but_{{=item.pid}}" title="Leave a comment">Comment</a>
+<!-- == Sharing section is disabled nowwww   
+    .
+    <a class="" title="Send this to friends or post it on your profile."  href="">Share</a>
+-->
+</div>
+{{if not request.vars.closed=='true':}}
+    <br/>
+    <br/>
+    <div id=comments_show_div_{{=item.pid}}>
+    {{for i in old_comments:}}
+        <div id=c{{=i.id}} class=comment_section>
+        {{author_name = db(db.auth_user.id==i.actor).select().first()}}
+
+        {{cm_area_pr_pic_url = URL(r=request,c='static', f='images/profile_temple_photo_tiny.gif')}}
+
+            <span  class="com_body" style="color:#3B5998;cursor:pointer" title="{{=author_name.first_name.title()}} {{=author_name.last_name.title()}}"><a href="#"><b style="margin-left:-5px;">{{=author_name.first_name.title()}} {{=author_name.last_name.title()}}</b></a></span>&nbsp;
+      <div 
+      style="
+      {{import string}}
+      {{asc=string.ascii_lowercase}}
+      {{if i.body and not i.body[0].lower() in asc:}}
+        direction:rtl;
+      {{pass}}
+      white-space:normal;width:345px;">
+      {{=XML(i.body, sanitize=True)}}</div>
+      <br/>
+       <div id="cm_like_bar">
+       <span title="{{=dt.ctime(i.creation_date)}}" style="font-size:11px;color:#919191;margin-left:1px;">{{=prettydate(i.creation_date, T)}}</span>
+       .
+    <a style="{{if not i.likes:}}display:none;{{pass}}" class="like_but like_series"></a>
+    <span class="num_of_cm_likes" style="{{if not i.likes:}}display:none;{{pass}}color:#6d84b4;margin-right:5px;margin-left:-2px;">{{=len(i.likes)}}</span>
+    <a style="cursor:pointer;" class=like_cm_{{=item.pid}}>{{if auth.user_id in i.likes:}}Unlike{{else:}}Like{{pass}}</a> . <a style="{{if i.actor != auth.user_id:}}display:none;{{pass}} cursor:pointer;" class=remove_cm_{{=item.pid}}>Remove</a>
+    </div>
+    </div>
+    {{pass}}
+    </div>
+    <!-- ********* Commenting Core ********** -->
+    <div id="commenting_part_{{=item.pid}}">
+        <table><tr><td>
+        <div class=cm_txtarea_holder_{{=item.pid}}  id=cm_txtarea_holder_{{=item.pid}} >
+        <textarea class="cmt" autocomplete=off title="Write what do you think about this" name=comment_body_{{=item.pid}} placeholder="Write your comment here ..." id=comment_body_{{=item.pid}}></textarea></div></td><td style="vertical-align:top;">
+        <input type=hidden id="actor_{{=item.pid}}" name="actor_{{=item.pid}}" value={{=auth.user_id}}>
+        <button style="width:60px;" class="uiButton cm_submit_{{=item.pid}}" id=cm_submit_{{=item.pid}}>Post</button></td>
+        <td style="vertical-align:top;"></td>
+        </tr>
+        </table>
+
+
+        <!-- ********* End of Commenting Core *** -->
+        </div>
+
+{{pass}}
+</div>
+</div>
+
+<script type="text/javascript">
+var profile_pic = $('#pr_pic_add_val').val();
+$(document).ready(function(){
+
+    $('#comment_body_{{=item.pid}}').autoResize({
+        // On resize:
+        onResize : function() {
+            $(this).css({opacity:0.9});
+        },
+        // After resize:
+        animateCallback : function() {
+            $(this).css({opacity:0.6});
+        },
+        // Quite slow animation:
+        animateDuration : 900,
+        // More extra space:
+        extraSpace : 11,
+
+    });
+    //$('#cm_like_bar_{{=item.pid}}').fadeIn(500);
+    //$('#comments_show_div_{{=item.pid}}').fadeIn(1000);
+    //$('#commenting_part_{{=item.pid}}').fadeIn(2500)
+
+function cmRemoveLiveEventHandler(event)
+{
+  if(event.handled !== true)
+  {
+    if(confirm("Are you sure you want to delete your comment?"))
+                {
+    var tar_id = $(this).parent('div').parent('.comment_section').attr('id');
+    ajax("{{=URL(r=request, c='utils', f='commenter', args='delete', vars={'_citem':item.id ,'com_id':''} )}}"+ tar_id, [''], 'jsfeedback_{{=item.pid}}');
+    $(this).parent('div').parent('.comment_section').fadeOut();
+    }
+    event.handled = true;
+  }
+  return false;
+}
+
+$(".remove_cm_{{=item.pid}}").live('click', cmRemoveLiveEventHandler);
+
+
+function CmLikeLiveEventHandler(event)
+    {
+      if(event.handled !== true)
+      {
+    var tar_id = $(this).parent('div').parent('.comment_section').attr('id');
+    //Change text of Like button    
+    var but_text = $(this).html();
+    if (but_text == 'Like'){
+        $(this).html('Unlike');
+    }
+    else{
+        $(this).html('Like');
+    }
+    ajax("{{=URL(r=request, c='utils', f='liker', args='comment', vars={'com_id':'', '_pid':item.pid} )}}" + tar_id, [''], 'jsfeedback_{{=item.pid}}');
+        event.handled = true;
+      }
+      return false;
+    }
+
+$(".like_cm_{{=item.pid}}").live('click', CmLikeLiveEventHandler);
+
+$(".plikebut_{{=item.pid}}").live('click', function(){
+
+    var item = $(this).attr('id');
+    //Change text of Like button    
+    var but_text = $(this).html();
+    if (but_text == 'Like'){
+        $(this).html('Unlike');
+    }
+    else{
+        $(this).html('Like');
+    };
+    // Sending request to server and recieving result
+    ajax("{{=URL(r=request, c='utils', f='liker', args='page', vars={'page_id':''})}}" + item, [''],'jsfeedback_{{=item.pid}}');
+});
+
+$(".comment_but_{{=item.pid}}").live('click', function(){
+    $('#comment_body_{{=item.pid}}').focus();
+});
+
+$(".cm_submit_{{=item.pid}}").live('click', function(){
+if ( $('#comment_body_{{=item.pid}}').val() != "Write your comment here") {
+{{ajax_url = URL(r=request, c='utils', f='commenter', vars={'pid': item.pid,'item':item.id})}}
+ ajax('{{=ajax_url}}',['comment_body_{{=item.pid}}','actor_{{=item.pid}}'],'jsfeedback_{{=item.pid}}');
+    //ajax("{{=URL(r=request, c='utils', f='comment_core', vars={'item':item.pid} )}}",[''],'whole_target');
+    //ajax('/utils/comment_core?item={{=item.pid}}',[''],'whole_target');
+
+  $(this).html('<img height="11" alt="Loading icon" width="16" src={{=URL(r=request, c="static", f="images/gsnjnwui-um.gif")}} />'); //loading icon
+}
+});
+});
+</script>
+

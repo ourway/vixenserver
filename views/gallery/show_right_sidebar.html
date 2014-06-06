@@ -1,0 +1,110 @@
+{{import urllib2}}
+{{if file:}}
+
+<div id="gallery_options_div">
+{{if item.owner == session.user_id:}}
+        <div id=gallery_show_room_description_div>
+            <textarea name=file_desc_area id=file_desc_area>{{=item.description or ''}}</textarea>
+        </div>
+{{pass}}
+    <div style="min-height:140px;">
+    <div id="{{if session.user_id:}}gallery_show_room_description{{pass}}">
+    <p style="width:150px;"
+        {{if item.owner==session.user_id:}}
+            title="Click to Edit"
+        {{pass}}
+        id=gs_desc_span>
+        {{if item.owner == session.user_id:}}
+            {{=item.description or XML('<span style="color:#ccc;">Write Something About this photo</span>')}}
+        {{else:}}
+            {{=item.description or ''}}
+        {{pass}}
+    </p></div></div>
+{{if session.user_id:}}
+    <div id=gallery_show_pic_tools>
+    <li><a href="../../_download_photo?hash={{=file.hash}}">Download High Resolution Version</a></li>
+    <li><a id=maktgar><del>Make Gallery Artwork</del></a></li>
+    <li><a id=gsptdtp>Delete This Photo</a></li>
+    <li><a><del>Report Abuse</del></a></li>
+    <li><a><del>Tag Your Friends</del></a></li>
+    <li><a title="Right click and copy the public link" href="{{=URL(r=request, c='gallery', f='show', args='%s/%s'%(gallery.uuid, file.uuid), vars={'pcode':item.publish_code})}}">Public Url</a></li>
+
+    <li><a href="{{=URL(r=request, c='utils', f='mail_box')}}" rel="light" vars="author={{=session.username}}&authorname=your&mtype=photo&url={{=urllib2.quote(URL(r=request, c='gallery', f='show', args='%s/%s'%(gallery.uuid, file.uuid), vars={'pcode':item.publish_code}) )}}" title="Email to your friends">Email</a></li>
+    {{pass}}
+    {{if file and gallery:}}
+        {{if session.user_id:}}
+            {{#=LOAD(c='utils', f='short_url', args=[], vars={'item':item.pid, 'pcode':item.publish_code}, ajax=True)}}
+        {{pass}}
+            {{#=LOAD(c='utils', f='fblike', args=[], vars={'item':item.pid, 'pcode':item.publish_code}, ajax=True)}}
+
+{{pass}}
+</div>
+    <!-- Java scripts -->
+    <script type="text/javascript">
+     $(document).ready(function(){
+    
+    $('#gloff').click(function(){
+    
+        //$('#mainContainer *').css('color','transparent');
+        //$('#mainContainer *').css('text-shadow','0 0 5px #999');
+        //$('body').css('background','#333');
+        //$('body *').css('opacity','0.25');
+        //$('#mainContainer').children('*').css('opacity','0.1');
+        //$('#gallery_center_div').children('*').css('opacity','.9');
+
+    });
+
+    $("#file_desc_area").blur(function(){
+
+        //document.write(desc_text);
+        //alert( $(this).val() );
+        //if ($(this).val() != ''){;
+    {{if session.user_id and item.owner == session.user_id:}}
+
+        ajax('../../update_file_desc?pid=' + '{{=item.pid}}', ['file_desc_area'], 'gs_desc_span');
+        //}
+        $('#gallery_show_room_description_div').hide();
+        $('#gallery_show_room_description').fadeIn('slow');
+    });
+
+        $("#gallery_show_room_description").click(function(){
+            $('#gallery_show_room_description').hide();
+            $('#gallery_show_room_description_div').fadeIn();
+            $('#file_desc_area').focus();
+    });
+
+    {{pass}}
+    function delete_confirm(){
+        if(confirm("Are you sure you want to delete this photo?"))
+            {
+                document.location = "../../_delete_photo?uuid={{=file.uuid}}&galuuid={{=gallery.uuid}}";
+            }
+    };
+
+    $('#gsptdtp').click(function(){
+
+        delete_confirm();
+
+    });
+    });
+    </script>
+    {{else:}}
+    <div id=galerry_right_contents">
+    <ul>
+    <li><a class="blue" href="{{=URL(r=request, c='gallery', f='upload_photos', vars={'gid':gallery.uuid} )}}">Upload Photos</a></li>
+    <div id=gal_upload_photo_div></div>
+    <li><a class="blue">Edit This Gallery</a></li>
+    <li><a title="Delete Confirmation" id="delete_gal_link" rel="light" href="../delete_gallery" vars="gid={{=gallery.uuid}}" class="blue">Delete This Gallery</a></li>
+    </ul>
+    </div>
+
+
+    <script type="text/javascript">
+//<![CDATA[
+        $(document).ready(function(){
+            //some code here
+        });
+    </script>
+
+
+{{pass}}

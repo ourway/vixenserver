@@ -1,0 +1,5 @@
+#This is my new backedup crontab
+* * * * * python /home/www-data/web2py/web2py.py --no-banner -S vixenserver -M -N -R applications/vixenserver/proc/videoProcess.py >> $HOME/.vixenserver_process_output.log 2>&1
+* * * * * python /home/www-data/web2py/web2py.py --no-banner -S vixenserver -M -N -R applications/vixenserver/proc/mail.py >> $HOME/.vixenserver_process_output.log 2>&1
+
+#* * * * * cd /usr/share/web2py && python web2py.py -C -D 1 >> $HOME/.vixenserver_process_output.log 2>&1

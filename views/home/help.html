@@ -1,0 +1,14 @@
+{{extend 'layout.html'}}
+<div style="min-height:550px;padding:10px;background:#f2f2f2;">
+    {{if not request.vars.topic:}}
+        <ul>
+            {{for tut in tut_list:}}
+                <li><a href="{{=URL(vars={'topic':tut})}}">{{=tut}}</a></li>
+            {{pass}}
+    </ul>
+    {{else:}}
+        <h3 align="center">{{=request.vars.topic.capitalize()}}</h3>
+        <hr/>
+        {{=topic}}
+    {{pass}}
+</div>

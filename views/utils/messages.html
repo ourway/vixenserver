@@ -1,0 +1,68 @@
+{{extend 'layout.html'}}
+<div id="messages_div">
+
+<div class="sidebar">
+<a href="{{=URL(args='inbox')}}"><b>I</b>NBOX</a><br/><br/>
+<a href="{{=URL(args='sent')}}"><b>S</b>ENT</a>
+</div>
+
+<div id="msearchbox" />
+    <input id="search" PLACEHOLDER="Search messages" type="text" name="query" />
+</div>
+
+<div id="inbox" class="message_list">
+    <div style="width:30%;margin:auto;">
+    <img src="{{=URL(c='static', f='images/ajax-loader-2.gif')}}" />
+    </div>
+
+</div>
+</div>
+
+
+<script type="text/javascript">
+    function inbox() { //must be outside of ready
+        ajax('{{=URL(c="utils", f="inbox", vars={"page":request.vars.page, "filter":request.vars.filter})}}',[''],'inbox');
+    };
+    function sent() { //must be outside of ready
+        ajax('{{=URL(c="utils", f="sent_items", vars={"page":request.vars.page})}}',[''],'inbox');
+    };
+
+    function gotolink(link) {
+
+        window.location=link;
+
+    }
+    function showm(mid) { //must be outside of ready
+        
+        ajax('{{=URL(c="utils", f="showm")}}?mid='+mid, [''], 'inbox')
+    };
+
+    function mar() { //must be outside of ready
+        ajax('{{=URL(c="utils", f="make_read")}}', [''], 'messages');
+        inbox();
+    };
+
+ $(document).ready(function(){
+    
+    {{if not request.vars.mid and request.args:}}
+        {{if request.args[0]=='inbox':}}
+            inbox();  //get inbox
+            setInterval("inbox()",25000);
+        {{elif request.args[0]=='sent':}}
+            sent();
+            setInterval("sent()", 25000);
+        {{pass}}
+    {{else:}}
+        //alert('wow');
+        showm('{{=request.vars.mid}}'); //load a message
+    {{pass}}
+    $('#search').change(function(){
+        ajax('{{=URL(c="utils", f="search_message")}}', ['query'], 'inbox')
+    });
+
+    $('#mar').live('click', function(){
+        mar();
+    });
+
+});
+</script>

@@ -1,0 +1,51 @@
+{{extend 'layout.html'}}
+<div id="report">
+
+<div style="opacity:0.5;margin-top:15%;float:right">
+<img height="128" width="128" alt="logo" src="{{=URL(c='static', f='images/reports.png')}}" />
+</div>
+
+<h3 align="center">Write A Report</h3>
+<h5 align="center">{{=today}} / {{=repno}}</h5>
+<div class="repform">
+<div class="reptext">
+<a href="#" id="replang">EN</a>
+<textarea name="body" id="reparea" PLACEHOLDER="Write your report here ..."></textarea>
+
+
+
+</div>
+
+
+
+
+<button id="sendreport">Send Report</button>
+</div>
+
+</div>
+
+<script type="text/javascript">
+ $(document).ready(function(){
+
+    $('#sendreport').click(function(){
+        //alert('ok');
+        ajax('{{=URL(c="utils", f="savereport")}}', ['body'], 'messages')
+    });
+    $('#replang').click(function(){
+        var lang = $(this).text();
+        if (lang == 'EN'){
+            //alert('English');
+            $('#reparea').css('direction', 'rtl');
+            $('#reparea').attr('PLACEHOLDER', 'لطفأ گزارش خود را اینجا بنویسید ...');
+            $(this).text('FA');
+        }
+        else{
+            //alert('Parsi')
+            $('#reparea').css('direction', 'ltr');
+            $('#reparea').attr('PLACEHOLDER', 'Write your report here ...');
+            $(this).text('EN');
+        }
+    });
+
+ });
+ </script>

@@ -1,0 +1,394 @@
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - materials - skin [girl]</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#050505;
+				color: #fff;
+				padding:0;
+				margin:0;
+				overflow:hidden;
+				font-family:monospace;
+				text-align:center;
+			}
+			h1 { }
+			a { color:red }
+			#info {
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+				text-align: center;
+				z-index:100;
+				display:block;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<div id="info">
+		<a href="http://github.com/mrdoob/three.js" target="_blank">three.js</a> webgl - skin rendering + postprocessing -
+		model by <a href="http://archive3d.net/?a=download&id=1de23de2" target="_blank">Silvia Catalano</a>
+		</div>
+
+        <script src="{{=URL(c='static', f='girl/js/ThreeSkinGirl.js')}}"></script>
+
+
+		<script src="{{=URL(c='static', f='js/Detector.js')}}"></script>
+		<script src="{{=URL(c='static', f='js/Stats.js')}}"></script>
+
+		<script>
+
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+
+			var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+
+			var container, stats;
+
+			var camera, scene, controls;
+			var renderer;
+
+			var root;
+
+			var reflectionCube;
+
+			var loaderCTM;
+
+			var composer, composerBeckmann, effectFXAA;
+
+			var firstPass = true, modelLoaded = false;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				// CAMERA
+
+				camera = new THREE.PerspectiveCamera( 30, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 5000 );
+				camera.position.set( 131, 193, 75 );
+				camera.up.set( 0.22, 0.92, -0.33 );
+
+				controls = new THREE.TrackballControls( camera );
+				controls.dynamicDampingFactor = 0.1;
+				controls.minDistance = 50;
+				controls.maxDistance = 600;
+
+				controls.target.set( -30, -30, -30 );
+
+				camera.lookAt( controls.target );
+
+
+				// SCENE
+
+				scene = new THREE.Scene();
+
+
+				// LIGHTS
+
+				spotLight = new THREE.SpotLight( 0xffffff );
+				spotLight.position.set( 70, 50, 0 );
+				spotLight.position.multiplyScalar( 3.5 );
+				spotLight.castShadow = true;
+				spotLight.onlyShadow = true;
+				scene.add( spotLight );
+
+				pointLight = new THREE.PointLight( 0xffffff, 1.6, 113 );
+				pointLight.position.set( 70, 50, 0 );
+				pointLight.color.setHSV( 0.5, 0.2, 0.99 );
+				scene.add( pointLight );
+
+				var light = new THREE.PointLight( 0xffffff, 0.54, 200 );
+				light.position.set( -70, -50, 0 );
+				scene.add( light );
+
+				var light = new THREE.PointLight( 0xffffff, 0.25, 150 );
+				light.position.set( 30, 50, -80 );
+				scene.add( light );
+
+				scene.add( new THREE.AmbientLight( 0xffffff ) );
+
+
+				// RENDERER
+
+				renderer = new THREE.WebGLRenderer( { antialias: false, clearColor: 0x333333, clearAlpha: 1 } );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+				renderer.domElement.style.position = "relative";
+
+				var color = new THREE.Color();
+				color.setHSV( 0.05, 0.25, 0.0 );
+				renderer.setClearColor( color, 1 );
+
+				container.appendChild( renderer.domElement );
+
+				//
+
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+
+				//
+
+				renderer.shadowMapAutoUpdate = true;
+				renderer.shadowMapEnabled = true;
+				renderer.shadowMapDarkness = 0.3;
+				renderer.shadowMapWidth = 2048;
+				renderer.shadowMapHeight = 2048;
+				renderer.shadowCameraFov = 45;
+
+				//renderer.shadowMapSoft = false;
+
+				// STATS
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				stats.domElement.style.zIndex = 100;
+				container.appendChild( stats.domElement );
+
+				stats.domElement.children[ 0 ].children[ 0 ].style.color = "#888";
+				stats.domElement.children[ 0 ].style.background = "transparent";
+				stats.domElement.children[ 0 ].children[ 1 ].style.display = "none";
+
+				// ENVIRONMENT MAP
+
+				var path = "textures/cube/SwedishRoyalCastle/";
+				var format = '.jpg';
+				var urls = [
+						path + 'px' + format, path + 'nx' + format,
+						path + 'py' + format, path + 'ny' + format,
+						path + 'pz' + format, path + 'nz' + format
+					];
+
+
+				reflectionCube = THREE.ImageUtils.loadTextureCube( urls );
+				reflectionCube.format = THREE.RGBFormat;
+
+				// LOADER
+
+				var useWorker = true,
+					useBuffers = true;
+
+				loaderCTM = new THREE.CTMLoader( renderer.context, true );
+				document.body.appendChild( loaderCTM.statusDomElement );
+
+				var position = new THREE.Vector3( 0, -50, 0 );
+				var scale = new THREE.Vector3( 1, 1, 1 );
+
+				var start = Date.now();
+
+				loaderCTM.loadParts( "ctm/girl/girl.js", function( geometries, materials ) {
+
+					hackMaterials( materials );
+
+					root = new THREE.Object3D();
+					root.position = position;
+
+					for ( var i = 0; i < geometries.length; i ++ ) {
+
+						var mesh = new THREE.Mesh( geometries[ i ], materials[ i ] );
+						mesh.scale = scale;
+						mesh.matrixAutoUpdate = false;
+						mesh.updateMatrix();
+						mesh.castShadow = true;
+						mesh.receiveShadow = true;
+						root.add( mesh );
+
+					}
+
+					scene.add( root );
+
+					loaderCTM.statusDomElement.style.display = "none";
+
+					var end = Date.now();
+
+					console.log( "load time:", end - start, "ms" );
+
+					modelLoaded = true;
+
+				}, useWorker, useBuffers );
+
+
+				// COMPOSER
+
+				renderer.autoClear = false;
+
+				var renderModel = new THREE.RenderPass( scene, camera );
+
+				var effectBleach = new THREE.ShaderPass( THREE.ShaderExtras[ "bleachbypass" ] );
+				var effectColor = new THREE.ShaderPass( THREE.ShaderExtras[ "colorCorrection" ] );
+				effectFXAA = new THREE.ShaderPass( THREE.ShaderExtras[ "fxaa" ] );
+
+				effectFXAA.uniforms[ 'resolution' ].value.set( 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT );
+
+				effectBleach.uniforms[ 'opacity' ].value = 0.85;
+
+				effectColor.uniforms[ 'powRGB' ].value.set( 1.5, 1.55, 1.55 );
+				effectColor.uniforms[ 'mulRGB' ].value.set( 1.2, 1.2, 1.2 );
+
+				effectFXAA.renderToScreen = true;
+
+				composer = new THREE.EffectComposer( renderer );
+
+				composer.addPass( renderModel );
+
+				composer.addPass( effectBleach );
+				composer.addPass( effectColor );
+				composer.addPass( effectFXAA );
+
+				// BECKMANN
+
+				var effectBeckmann = new THREE.ShaderPass( THREE.ShaderSkin[ "beckmann" ] );
+
+				var pars = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBufer: false };
+				var rtwidth = 512, rtheight = 512;
+
+				composerBeckmann = new THREE.EffectComposer( renderer, new THREE.WebGLRenderTarget( rtwidth, rtheight, pars ) );
+				composerBeckmann.addPass( effectBeckmann );
+
+				// EVENTS
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			//
+
+			function hackMaterials( materials ) {
+
+				for ( var i = 0; i < materials.length; i ++ ) {
+
+					var m = materials[ i ];
+
+					if ( m.name === "eyes" || i === 0 ) {
+
+						var sc = 0.34, ac = 0.3;
+						var material = new THREE.MeshPhongMaterial();
+
+						if ( i !== 0 ) {
+
+							material.color.setRGB( 0, 1, 1 );
+							material.reflectivity = 0.13;
+
+						} else {
+
+							material.color.setRGB( 1, 1, 1 );
+							material.reflectivity = 0.025;
+
+						}
+
+						material.specular.setRGB( sc, sc, sc );
+						material.ambient.setRGB( ac, ac, ac );
+						material.shininess = 100;
+						material.transparent = m.transparent;
+						material.map = m.map;
+						material.perPixel = true;
+
+						material.envMap = reflectionCube;
+						material.combine = THREE.MixOperation;
+
+					} else {
+
+						var shader = THREE.ShaderSkin[ "skinSimple" ];
+
+						var fragmentShader = shader.fragmentShader;
+						var vertexShader = shader.vertexShader;
+
+						var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+						uniforms[ "tBeckmann" ].texture = composerBeckmann.renderTarget1;
+						uniforms[ "tDiffuse" ].texture = m.map;
+
+						uniforms[ "uAmbientColor" ].value.setHex( 0x000000 );
+						uniforms[ "uDiffuseColor" ].value.setHex( 0xffffff );
+						uniforms[ "uSpecularColor" ].value.setHex( 0x666666 );
+
+						uniforms[ "uRoughness" ].value = 0.3;
+						uniforms[ "uSpecularBrightness" ].value = 0.7;
+
+						var material = new THREE.ShaderMaterial( { fragmentShader: fragmentShader, vertexShader: vertexShader, uniforms: uniforms, lights: true } );
+						material.transparent = m.transparent;
+
+					}
+
+					materials[ i ] = material;
+
+				}
+
+			}
+
+
+			//
+
+			function onWindowResize( event ) {
+
+				SCREEN_WIDTH = window.innerWidth;
+				SCREEN_HEIGHT = window.innerHeight;
+
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+
+				camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+				camera.updateProjectionMatrix();
+
+				composer.reset();
+
+				effectFXAA.uniforms[ 'resolution' ].value.set( 1 / SCREEN_WIDTH, 1 / SCREEN_HEIGHT );
+
+			}
+
+			//
+
+			function onDocumentMouseMove(event) {
+
+				mouseX = ( event.clientX - windowHalfX ) * 10;
+				mouseY = ( event.clientY - windowHalfY ) * 10;
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+
+			function render() {
+
+				controls.update();
+
+				renderer.clear();
+
+				if ( firstPass ) {
+
+					composerBeckmann.render();
+					firstPass = false;
+
+				}
+
+				composer.render( 0.1 );
+				//renderer.render( scene, camera );
+
+				if ( modelLoaded ) {
+
+					renderer.shadowMapAutoUpdate = false;
+
+				}
+
+			}
+
+		</script>
+
+	</body>
+</html>
+

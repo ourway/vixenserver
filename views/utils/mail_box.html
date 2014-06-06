@@ -1,0 +1,62 @@
+{{extend 'light_overlay.html'}}
+<div style="width:400px" id="mailbox_div">
+<div id="mbjstarget"></div>
+<div id="s">
+<p>Dear {{=auth.user.first_name.title()}}, Write your message to {{=target.first_name.title()}} here:<p>
+
+
+<textarea width="100%" name="message" id="mail_box_message_area" placeholder="Message here..."></textarea>
+
+<form id="attachform" class='attachform' enctype="multipart/form-data" method="post"
+action="{{=URL(c='home', f='upload', vars={'type':'attachment', 'mitem':item.uuid})}}"
+>
+<input name="file" id="file_upload_input" type="file" />
+</form>
+
+<div id="upload_response"></div>
+<br/>
+<p align="center">
+    <button id="mailbox_sender" style="font-size:14px;" class="uiButton">Send</button>
+</p>
+
+</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $('#mailbox_sender').live('click', function(){
+                        var message = $('#mail_box_message_area').val();
+                        //alert(message);
+                        if (message ==''){
+                            $('#mail_box_message_area').focus();
+                            $('#mail_box_message_area').css('background','#FFE5EB');
+                            return null; //finish process
+                        }
+                        //$(this).html('<img height="11" alt="Loading icon" width="16" src={{=URL(r=request, c="static", f="images/gsnjnwui-um.gif")}} />'); //loading icon
+
+                    ajax('{{=URL(r=request, c="utils", f="mailer_ajax", vars={"tid":target.id, "mtype":"message", "item":item.uuid})}}', ['message'], 'mbjstarget');
+
+                    //$('#attachform').submit();
+                    
+
+                    });
+
+
+    $('#mail_box_message_area').autoResize({
+        // On resize:
+        onResize : function() {
+            $(this).css({opacity:0.9});
+        },
+        // After resize:
+        animateCallback : function() {
+            $(this).css({opacity:0.6});
+        },
+        // Quite slow animation:
+        animateDuration : 900,
+        // More extra space:
+        extraSpace : 11,
+    });
+
+});
+</script>

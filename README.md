@@ -7,17 +7,17 @@ An Open Source Web Based Asset Management System Specialized for Animation / Sho
 install
 ===========
 
-``
+```bash
 sudo apt-get install -y build-essential python python-dev swig nginx \
         python-virtualenv libjpeg-dev libpng-dev libtiff-dev libfreetype6-dev \
         python-setuptools imagemagick redis-server rabbitmq-server \
         libxml2-dev libxslt1-dev
 
-``
+```
 And then:
-``
+```bash
 pip install -U -r reqirements.txt
-``
+```
 
 
 

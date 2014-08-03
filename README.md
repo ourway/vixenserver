@@ -1,6 +1,6 @@
 vixenserver
 ===========
-An Open Source Web Based Asset Management System Specialized for Animation / Short Movie Production.
+An Open Source Web Based Asset Management System Specialized for Animation / Short Movie Production. It works with web2py.
 
 
 install
@@ -15,10 +15,15 @@ sudo apt-get install -y build-essential python python-dev swig nginx \
         libsdl1.2-dev libtheora-dev libva-dev libvdpau-dev libvorbis-dev libx11-dev \
         libxfixes-dev texi2html yasm zlib1g-dev
 
+cd $WEB2PY/applications
 ```
+git clone --recursive https://github.com/ourway/vixenserver.git
+```
+
 And then:
 ```bash
 pip install -U -r reqirements.txt
+./run.sh
 ```
 
 

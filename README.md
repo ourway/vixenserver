@@ -15,7 +15,10 @@ sudo apt-get install -y build-essential python python-dev swig nginx \
         libsdl1.2-dev libtheora-dev libva-dev libvdpau-dev libvorbis-dev libx11-dev \
         libxfixes-dev texi2html yasm zlib1g-dev
 
-cd $WEB2PY/applications
+```
+
+cd $WEB2PY/applications and:
+
 ```
 git clone --recursive https://github.com/ourway/vixenserver.git
 ```

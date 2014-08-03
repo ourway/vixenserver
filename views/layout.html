@@ -39,21 +39,21 @@
   <!-- CSS: implied media=all -->
   <!-- CSS concatenated and minified via ant build script-->
  {{
-  response.files.append(URL('static','css/skeleton.css'))
+  #response.files.append(URL('static','css/skeleton.css'))
   response.files.append(URL('static','css/web2py.css'))
-  response.files.append(URL('static','css/superfish.css'))
+  #response.files.append(URL('static','css/superfish.css'))
   response.files.append(URL('static','css/video-js.min.css'))
   response.files.append(URL('static','css/Tooltip.css'))
   response.files.append(URL('static','css/fileapi.css'))
   response.files.append(URL('static','js/Tooltip.js'))
   response.files.append(URL('static','js/video.min.js'))
-  response.files.append(URL('static','js/superfish.js'))
-  #response.files.append(URL('static','js/fileAPI.js'))
+  #response.files.append(URL('static','js/superfish.js'))
+ # response.files.append(URL('static','js/fileAPI.js'))
   response.files.append(URL('static','js/rpc.js'))
   response.files.append(URL('static','js/html4-defs.js'))
   response.files.append(URL('static','js/h5utils.js'))
-  response.files.append(URL('static','js/redactor.min.js'))
-  response.files.append(URL('static','css/redactor.min.css'))
+  #response.files.append(URL('static','js/redactor.min.js'))
+  #response.files.append(URL('static','css/redactor.min.css'))
   }}
 {{include 'web2py_ajax.html'}}
 <link rel="stylesheet" type="text/css" href= "{{=URL(r=request, c='static', f='css/style.css', vars={'version':7})}}" media="screen" /> 

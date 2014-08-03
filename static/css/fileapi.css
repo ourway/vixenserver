@@ -1,0 +1,150 @@
+#wrap {
+    margin: 0 auto;
+    float:left;
+    padding:5px;
+    margin:5px;
+}
+#warpheader{
+background:url(../images/image_add.png) no-repeat;
+min-height:64px;
+padding-left:74px;
+font-size:12px;
+}
+
+#upload_right_div{
+    background:url(../images/instant_upload_diagram.gif) no-repeat;
+    position:absolute;;
+    min-width:240px;
+    min-height:514px;
+    right:130px;
+    top:30px;
+    -webkit-transform: rotate(385deg); -o-transform: rotate(385deg);
+    display:none;
+
+}
+#fileDrop {
+    cursor: auto;
+    width: 180px;
+    height: 200px;
+    border: dashed 2px #ccc;
+    background-color: #fefefe;
+    float: left;
+    color: #333;
+    opacity: 0.4;
+    margin-top:50px;
+}
+
+#fileDrop p {
+    text-align: center;
+    padding-top:33%;
+    font-size: 20px;
+}
+#files {
+    margin: 0 0 0 200px;
+    width: 356px;
+    padding: 20px 20px 40px 20px;
+    border: solid 2px #ccc;
+    background: #fefefe;
+    min-height: 140px;
+    position: relative;
+}
+#files h2 {
+font-size:12px;
+}
+#files h3{
+font-size:12px;
+}
+.shadow{
+    -moz-box-shadow: 0 0 20px #ccc;
+    -webkit-box-shadow: 0 0 20px #ccc;
+}
+#fileDrop{
+
+}
+
+#files {
+    background:#f5f5f5;
+}
+
+#fileList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    #fileList li {
+        margin: 0;
+        padding: 10px 0;
+        margin: 0;
+        overflow: auto;
+        border-bottom: solid 1px #ccc;
+        position: relative;
+    }
+
+        #fileList li img {
+            width: 120px;
+            border: solid 1px #999;
+            padding: 6px;
+            margin: 0 10px 0 0;
+            background-color: #eee;
+            display: block;
+            float: left;
+        }
+
+#reset {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ccc;
+    text-decoration: none;
+}
+
+#reset:hover {
+    color: #333;
+}
+
+#upload {
+    color:#000;
+    position: absolute;
+    display: block;
+    bottom: 10px;
+    right: 10px;
+    width: auto;
+    background-color: #777;
+    padding: 4px 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+
+.loader {
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    color: orange;
+}
+
+.loadingIndicator {
+    width: 100%;
+    height: 2px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.imagePreview {
+    width: 300px;
+    padding: 10px;
+    border: solid 1px #ccc;
+    position: absolute;
+    background-color: white;
+}
+
+    .imagePreview img {
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+    }
+progress{
+ -moz-box-shadow: 0pt 5pt 25px #ccc; -webkit-box-shadow: 0pt 5pt 25px #ccc;
+}

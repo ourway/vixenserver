@@ -1,0 +1,6 @@
+.redactor_box { max-width: 769px; }
+body .redactor_box_fullscreen{ max-width: none; }
+.redactor_box textarea, .redactor_box iframe { min-height: 300px; }
+
+#redactor_tabs { padding-left: 0; }
+#redactor_tabs li, ul.redactor_toolbar li { list-style-type: none; display: inline; }

@@ -1,6 +1,11 @@
 pip
+setuptools
+virtualenv
+uwsgi
+requests
 wheel
 pycha
 lxml
 Pillow
 docx
+html2text

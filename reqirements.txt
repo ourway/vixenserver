@@ -1,6 +1,12 @@
 pip
 setuptools
 virtualenv
+Cython
+celery
+greenlet
+eventlet
+gevent
+redis
 uwsgi
 requests
 wheel

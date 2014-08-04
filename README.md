@@ -21,6 +21,13 @@ And then:
 pip install -U -r reqirements.txt
 ```
 
+On Centos you need to download and compile Cairo:
+
+```
+http://cairographics.org/releases/ 
+```
+
+and then install Pycairo manually
 
 
 contact

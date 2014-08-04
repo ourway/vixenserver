@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 
 # C extensions
-*.so
+# *.so
 
 # Distribution / packaging
 .Python
@@ -21,7 +21,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-
+*~
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -59,4 +59,5 @@ errors/
 sessions/
 databases/
 private/
+static/uploads/
 

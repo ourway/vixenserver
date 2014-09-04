@@ -1,4 +1,5 @@
 #!/bin/bash
-source $HOME/Documents/pyenv/bin/activate
-cd ../../
+source pyenv/bin/activate
+WEB2PYPATH=/home/farsheed/Documents/web2py/
+cd $WEB2PYPATH
 python -OO web2py.py --nogui -a "<recycle>"
